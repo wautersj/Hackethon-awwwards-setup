@@ -15,12 +15,12 @@ function init() {
 	//Create clean array
 	objects = [];
 
-	for (var i = 30 - 1; i >= 0; i--) {
+	for (var i = 50 - 1; i >= 0; i--) {
 		objects.push({
 			x: Math.round(Math.random()*window.innerWidth),
 			y: Math.round(Math.random()*window.innerHeight),
 			
-			color: '#FFFFFF',
+			color: '#19A598',
 			radius: 1 + Math.round(Math.random()*(window.innerWidth/125))
 		});
 	};
@@ -94,10 +94,10 @@ function drawCircle(obj){
 
 	//Object Stroke
 	_CONTEXT.lineWidth = obj.radius/5;
-	_CONTEXT.strokeStyle = '#FFFFFF';
+	_CONTEXT.strokeStyle = obj.color;
 	_CONTEXT.stroke();
 
 	//Object Effects
-	_CONTEXT.shadowBlur = 75;
-	_CONTEXT.shadowColor = "white";
+	_CONTEXT.shadowBlur = 60;
+	_CONTEXT.shadowColor = obj.color;
 }
