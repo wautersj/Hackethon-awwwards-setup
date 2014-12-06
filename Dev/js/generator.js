@@ -101,7 +101,6 @@
         odd = true
       }
     }
-    
     return oldData; 
     
   });
@@ -110,7 +109,7 @@
     
     var low = (first <= last)? first : last; 
     var high = (first >= last)? first : last; 
-    return Math.floor(Math.random() * (high-low))+low;
+    return Math.floor(Math.random() * (high-low+1))+low-1;
     
   });
     

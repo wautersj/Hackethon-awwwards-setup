@@ -22,13 +22,14 @@
     // Map 
     this.map = {
       "seed" : {
-        "width": 7,
-        "height": 3
+        "width": 10,
+        "height": 8
       },
-      "range" : 20,
+      "range" : 19,
       "opacity" : 0.05,
-      "sealevel" : 5,
-      "loops" : 4
+      "sealevel" : -0,
+      "loops" : 4,
+      "color" : true
     }
     
   };

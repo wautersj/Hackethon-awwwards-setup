@@ -13,7 +13,7 @@ module.exports = function(grunt) {
         options: {
           config: 'config.rb',
           sassDir: 'sass',
-          cssDir: 'css',
+          cssDir: '../prod/css',
           quiet: true
         }
       }
