@@ -115,15 +115,15 @@
     
   Generator.prototype.NewCentrTile = (function(data, i, j){
     
-    var left = (data[i][(parseInt(j)-1)] == undefined)? Math.floor(Math.random() * this.range) : data[i][(parseInt(j)-1)] ;
-    var right = (data[i][(parseInt(j)+1)] == undefined)? Math.floor(Math.random() * this.range) : data[i][(parseInt(j)+1)] ;
+    //var left = (data[i][(parseInt(j)-1)] == undefined)? Math.floor(Math.random() * this.range) : data[i][(parseInt(j)-1)] ;
+    //var right = (data[i][(parseInt(j)+1)] == undefined)? Math.floor(Math.random() * this.range) : data[i][(parseInt(j)+1)] ;
     var top = (data[(parseInt(i)-1)] == undefined)? Math.floor(Math.random() * this.range) : data[(parseInt(i)-1)][j] ;
     var bottom = (data[(parseInt(i)+1)] == undefined)? Math.floor(Math.random() * this.range) : data[(parseInt(i)+1)][j] ;
     
-    var first = Math.floor((left+right)/2);
-    var last = Math.floor((top+bottom)/2);
+    //var first = Math.floor((left+right)/2);
+    //var last = Math.floor((top+bottom)/2);
     
-    return this.NewTile(first, last);
+    return this.NewTile(top, bottom);
     
   });
   

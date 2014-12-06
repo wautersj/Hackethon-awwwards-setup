@@ -13,10 +13,10 @@
     
     // Grid
     this.grid = {
-      "width" : 35,
-      "height" : 27,
-      "xOffset" : 17,
-      "yOffset" : 16
+      "width" : 8,
+      "height" : 8,
+      "xOffset" : 0,
+      "yOffset" : 0
     }
     
     // Map 
@@ -27,8 +27,8 @@
       },
       "range" : 19,
       "opacity" : 0.05,
-      "sealevel" : -0,
-      "loops" : 4,
+      "sealevel" : -5,
+      "loops" : 5,
       "color" : true
     }
     
