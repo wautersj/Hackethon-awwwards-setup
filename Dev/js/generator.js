@@ -52,6 +52,7 @@
         var first = oldData[i][j];
         var last = (oldData[i][(parseInt(j)+1)] == undefined)? Math.floor(Math.random() * this.range) : oldData[i][(parseInt(j)+1)] ;
         newData[i].push(this.NewTile(first, last));
+        //newData[i].push(this.NewCentrTile(oldData, i, j));
       }
     }
     return newData; 

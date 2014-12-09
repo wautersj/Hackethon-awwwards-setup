@@ -17,8 +17,8 @@
     
     var canvas = document.createElement('canvas');
 		var context = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth*window.devicePixelRatio;
+    canvas.height = window.innerHeight*window.devicePixelRatio;
     
     for(var i in data){
       for(var j in data[i]){
@@ -29,7 +29,7 @@
       y++;
     }
     
-    this.canvas.context.drawImage(canvas,0,0);
+    this.canvas.context.drawImage(canvas,0,0, canvas.width/window.devicePixelRatio,  canvas.height/window.devicePixelRatio);
     
   });
   
@@ -58,12 +58,12 @@
       "#C4C4C4"
     ];
     
-    var x = (x * this.grid.width)+(0-(this.grid.width-this.grid.xOffset));
-    var y = (y * this.grid.height)+(0-(this.grid.height-this.grid.yOffset));
+    var x = (x * this.grid.width*window.devicePixelRatio);
+    var y = (y * this.grid.height*window.devicePixelRatio);
     
     context.fill();
     context.beginPath();
-    context.rect(x, y, this.grid.width, this.grid.height);
+    context.rect(x, y, this.grid.width*window.devicePixelRatio, this.grid.height*window.devicePixelRatio);
     
     if(this.map.color){
       context.fillStyle = color[range-this.map.sealevel];
