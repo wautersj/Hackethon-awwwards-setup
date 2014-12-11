@@ -10,74 +10,146 @@ var Bike = function (x, y, direction, speed, radius, color) {
   this.location_trail = []
 };
 
-Bike.prototype.move = function() {
-  move(this);
-}
+Bike.prototype.move = function(bikes) {
+  var bike = this;
+  var bikes = bikes;
 
-function move(bike){
-  // detect borders
-  var right_border = 18;
-  while(right_border < window.innerWidth){
-    right_border += 35;
+  var borders = getBorders();
+
+  bike = moveBike(bike);
+
+  passed_grid_crossing = passedGridCrossing(bike);
+
+  if (passed_grid_crossing) {
+    bike = putBikeOnCrossing(bike, borders);
+
+    var gonna_collide_with_border = borderCollision(bike, borders);
+    var gonna_collide_with_bike_trail = trailCollistion(bike, bikes);
+    var want_to_change_direction = wantToChangeDirection();
+
+    if (gonna_collide_with_bike_trail){
+      //var available_directions = availableDirections(bike, bikes);
+
+      bike.direction = get_new_direction(bike.direction, bike.x, bike.y, borders[2], borders[1]);
+      bike.speed = 0;
+      //use available directions to get direction
+    } else if (want_to_change_direction || gonna_collide_with_border){
+      bike.direction = get_new_direction(bike.direction, bike.x, bike.y, borders[2], borders[1]);
+      //use available directions to get direction
+      //still need to write algortime :p
+    }
+
+    bike = logBikeLocation(bike);
   }
-  right_border -= 35;
+};
 
-  var bottom_border = 17;
-  while(bottom_border < window.innerHeight){
-    bottom_border += 27;
-  }
-  bottom_border -= 27;
-
-  // console.log("x: " + bike.x);
-  // console.log("y: " + bike.y);
-  // console.log("direction: " + bike.direction);
-
+function moveBike(bike){
   angle = bike.direction * (Math.PI/180);
   bike.x += Math.cos(angle) * bike.speed;
   bike.y += Math.sin(angle) * bike.speed;
+  return bike;
+};
 
+function passedGridCrossing(bike){
   if ((bike.x >= (bike.last_x + 35)) || (bike.x <= (bike.last_x - 35)) || (bike.y >= (bike.last_y + 27)) || (bike.y <= (bike.last_y - 27))) {
-
-    var location = {
-      x: bike.x,
-      y: bike.y
-    }
-
-    bike.location_trail.push(location)
-
-    if ((bike.x >= (bike.last_x + 35)) || (bike.x <= (bike.last_x - 35))){
-      if (bike.x < bike.last_x){
-        bike.x = bike.last_x - 35
-        if (bike.x < 18){
-          bike.x = 18;
-        }
-      } else {
-        bike.x = bike.last_x + 35
-      }
-      bike.last_x = bike.x
-    }
-
-    if ((bike.y >= (bike.last_y + 27)) || (bike.y <= (bike.last_y - 27))){
-      if (bike.y < bike.last_y){
-        bike.y = bike.last_y - 27
-        if (bike.y < 17){
-          bike.y = 17;
-        }
-      } else {
-        bike.y = bike.last_y + 27
-      }
-      bike.last_y = bike.y
-    }
-
-    var randomnumber = Math.floor(Math.random() * (10 - 1 + 1)) + 1;
-    if (randomnumber == 5 ||
-        (bike.x <= 18 && bike.direction == 180) ||
-        (bike.y <= 17 && bike.direction == 270) ||
-        (bike.x >= right_border && bike.direction == 0) ||
-        (bike.y >= bottom_border && bike.direction == 90)){
-      bike.direction = get_new_direction(bike.direction, bike.x, bike.y, bottom_border, right_border);
-    }
+    return true;
+  } else {
+    return false;
   }
+};
+
+function putBikeOnCrossing(bike, borders){
+  if ((bike.x >= (bike.last_x + 35)) || (bike.x <= (bike.last_x - 35))){
+    if (bike.x < bike.last_x){
+      bike.x = bike.last_x - 35
+      if (bike.x < 18){
+        bike.x = borders[3];
+      }
+    } else {
+      bike.x = bike.last_x + 35
+    }
+    bike.last_x = bike.x
+  }
+
+  if ((bike.y >= (bike.last_y + 27)) || (bike.y <= (bike.last_y - 27))){
+    if (bike.y < bike.last_y){
+      bike.y = bike.last_y - 27
+      if (bike.y < 17){
+        bike.y = borders[0];
+      }
+    } else {
+      bike.y = bike.last_y + 27
+    }
+    bike.last_y = bike.y
+  }
+
+  return bike;
+};
+
+function logBikeLocation(bike){
+  var location = {
+    x: bike.x,
+    y: bike.y
+  }
+
+  bike.location_trail.push(location)
+
+  return bike;
+};
+
+function borderCollision(bike, borders){
+  if ((bike.x <= 18 && bike.direction == 180) || (bike.y <= 17 && bike.direction == 270) ||
+      (bike.x >= borders[1] && bike.direction == 0) || (bike.y >= borders[2] && bike.direction == 90)){
+    return true;
+  } else {
+    return false;
+  }
+};
+
+function wantToChangeDirection(){
+  var randomnumber = Math.floor(Math.random() * (10 - 1 + 1)) + 1;
+  if (randomnumber == 5){
+    return true;
+  } else {
+    return false;
+  }
+};
+
+function trailCollistion(bike, bikes){
+  var trail_collision = false;
+
+  angle = bike.direction * (Math.PI/180);
+  var x_offset = 0;
+  var y_offset = 0;
+
+  if (bike.direction == 270){
+    x_offset = 0;
+    y_offset = 27;
+  } else if (bike.direction == 0) {
+    x_offset = -35;
+    y_offset = 0;
+  } else if (bike.direction == 90) {
+    x_offset = 0;
+    y_offset = -27;
+  } else if (bike.direction == 180) {
+    x_offset = 35;
+    y_offset = 0;
+  }
+
+  for (var i = bikes.length - 1; i >= 0; i--) {
+    for (var u = bikes[i].location_trail.length - 2; u >= 0; u--) {
+      if ((bikes[i].location_trail[u]['x'] + x_offset) == bike.x && (bikes[i].location_trail[u]['y'] + y_offset) == bike.y){
+        trail_collision = true;
+        console.log("collision with trail");
+      }
+    };
+  };
+
+  return trail_collision;
+};
+
+function availableDirections(bike, bikes){
+
 };
 
 function get_new_direction(current_direction, x, y, bottom_border, right_border) {
@@ -136,4 +208,23 @@ function sleep(milliseconds) {
       break;
     }
   }
+}
+
+function getBorders(){
+    // detect borders
+  var right_border = 18;
+  while(right_border < window.innerWidth){
+    right_border += 35;
+  }
+  right_border -= 35;
+
+  var bottom_border = 17;
+  while(bottom_border < window.innerHeight){
+    bottom_border += 27;
+  }
+  bottom_border -= 27;
+  var left_border = 18;
+  var top_border = 17;
+
+  return [top_border, right_border, bottom_border, left_border]
 }
