@@ -29,9 +29,9 @@ function init() {
 
   imageObj = new Image();
   imageObj.onload = function() {
-    imgCan.width = this.width*0.3;
-    imgCan.height = this.height*0.3;
-    console.log(imgCan.width/2)
+    imgCan.width = this.width*0.2;
+    imgCan.height = this.height*0.2;
+    //console.log(imgCan.width/2)
     // imgCtx.translate(17, -13);
     // imgCtx.rotate(10*Math.PI/180);
     imgCtx.drawImage(this,0,0, this.width, this.height, 0, 0, imgCan.width, imgCan.height);
@@ -55,8 +55,8 @@ function init() {
 }
 
 function gameStart(){
-   bikeOne = new Bike(228, 260, 0, 0, 5,'#FFFFFF');
-   bikeTwo = new Bike(298+35*15, 260, 180, 0, 5,'#24e0c9');
+   // bikeOne = new Bike(228, 260, 0, 5, 5,'#FFFFFF');
+   // bikeTwo = new Bike(298+35*15, 260, 180, 5, 5,'#24e0c9');
   // bikeThree = new Bike(298, 314, 0, 5, 5,'#55b5');
   // bikeFour = new Bike(263, 233, 0, 5, 5,'#19a497');
   // bikeFive = new Bike(228, 179, 0, 5, 5,'#FFFFFF');
@@ -64,8 +64,8 @@ function gameStart(){
   // bikeSeven = new Bike(298, 314, 0, 5, 5,'#55b5');
   // bikeEight = new Bike(263, 233, 0, 5, 5,'#19a497');
 
-   _OBJECTS.push(bikeOne);
-   _OBJECTS.push(bikeTwo);
+   // _OBJECTS.push(bikeOne);
+   // _OBJECTS.push(bikeTwo);
   // _OBJECTS.push(bikeThree);
   // _OBJECTS.push(bikeFour);
   // _OBJECTS.push(bikeFive);
@@ -76,13 +76,13 @@ function gameStart(){
 
 
 
-  // var colors = [ "#19a497", "#24e0c9", "#105b50", "#FFFFFF" ]
+  var colors = [ "#19a497", "#24e0c9", "#105b50", "#FFFFFF" ]
 
-  // for (var i = 2; i > 0; i--) {
-  //   color = colors[Math.floor(Math.random()*colors.length)];
-  //   bikeOne = new Bike(228, 179, 0, 5, 5,color);
-  //   _OBJECTS.push(bikeOne);
-  // }
+  for (var i = 20; i > 0; i--) {
+    color = colors[Math.floor(Math.random()*colors.length)];
+    bikeOne = new Bike(228, 179, 0, 5, 5,color);
+    _OBJECTS.push(bikeOne);
+  }
   render();
 }
 
@@ -95,7 +95,7 @@ function render() {
       drawObjects();
       render();
     });
-  }, 1000/_FPS);
+  }, 100/_FPS);
 }
 
 function updateCanvas() {
@@ -122,7 +122,7 @@ function drawObjects() {
 
   _CONTEXT.globalAlpha = 0.1;
   _CONTEXT.fillStyle = '#000000';
-  //_CONTEXT.fillRect(0,0,window.innerWidth,window.innerHeight);
+  _CONTEXT.fillRect(0,0,window.innerWidth,window.innerHeight);
   _CONTEXT.globalAlpha = 1;
 
   // _CONTEXT.fillStyle = '#000000';
@@ -132,8 +132,8 @@ function drawObjects() {
     var bike = _OBJECTS[i];
 
     _CONTEXT.fillStyle = bike.color;
-    // _CONTEXT.shadowColor = bike.color;
-    // _CONTEXT.shadowBlur = 20;
+    _CONTEXT.shadowColor = bike.color;
+    _CONTEXT.shadowBlur = 20;
 
     _CONTEXT.beginPath();
     _CONTEXT.arc(bike.x, bike.y, bike.radius, 0, Math.PI*2);
@@ -150,15 +150,15 @@ function drawObjects() {
     imgContainerCtx.fillStyle = '#000000';
     //_CONTEXT.fillRect(0,0,window.innerWidth,window.innerHeight);
     imgContainerCtx.globalAlpha = 1;
-    console.log(imgCan.height)
+    //console.log(imgCan.height)
 
     //Drawing rotated bike.
     imgContainerCtx.clearRect ( 0 , 0 , imgCan.width, imgCan.height );
-    imgContainerCtx.save(); 
+    imgContainerCtx.save();
     imgContainerCtx.translate(bike.x, bike.y);
-	imgContainerCtx.rotate(120*(Math.PI/180));
-	imgContainerCtx.drawImage(imgCan, -(imgCan.width/2), -(imgCan.height/2));
-	imgContainerCtx.restore();
+  	imgContainerCtx.rotate(bike.direction*(Math.PI/180));
+  	imgContainerCtx.drawImage(imgCan, -(imgCan.width/2), -(imgCan.height/2));
+  	imgContainerCtx.restore();
   };
 
 }
