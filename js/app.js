@@ -43,15 +43,23 @@ function createPixels(multiplyerX,multiplyerY) {
 	rects = [];
 	for (var pox = pixelsOnX; pox >= 0; pox--) {
 		for (var poy = pixelsOnY; poy >= 0; poy--) {
-			rects.push({
+			var tile = {
 				x: pox*tileWidth,
 				y: poy*tileHeight,
 				width: tileWidth,
 				height: tileHeight,
+				color: '#19a497',
 				opacity: 0,
 				_opacity: Math.random()*0.50 + 0.25,
 				inRange: false
-			});
+			}
+
+			if(Math.random()>0.5){
+				tile.color = '#FFFFFF';
+			}
+
+
+			rects.push(tile);
 		};	
 	};
 }
@@ -144,7 +152,7 @@ function drawObjects(){
 		var pixel = rects[i];
 
 		_CONTEXT.globalAlpha = pixel.opacity;
-		_CONTEXT.fillStyle = '#19a497';
+		_CONTEXT.fillStyle = pixel.color;
 		_CONTEXT.fillRect(pixel.x,pixel.y,pixel.width,pixel.height);
 	};
 }
