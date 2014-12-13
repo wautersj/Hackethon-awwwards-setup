@@ -29,13 +29,16 @@ function init() {
 
   imageObj = new Image();
   imageObj.onload = function() {
-    //imgCan.width = this.width*0.3;
-    //imgCan.height = this.height*0.3;
+    imgCan.width = this.width*0.3;
+    imgCan.height = this.height*0.3;
+    console.log(imgCan.width/2)
+    // imgCtx.translate(17, -13);
+    // imgCtx.rotate(10*Math.PI/180);
     imgCtx.drawImage(this,0,0, this.width, this.height, 0, 0, imgCan.width, imgCan.height);
 
     gameStart();
   };
- 
+
   imageObj.src = "img/lightBike.svg";
 
 
@@ -43,8 +46,8 @@ function init() {
 }
 
 function gameStart(){
-   bikeOne = new Bike(228, 260, 0, 5, 5,'#FFFFFF');
-   bikeTwo = new Bike(298+35*15, 260, 180, 5, 5,'#24e0c9');
+   bikeOne = new Bike(228, 260, 0, 0, 5,'#FFFFFF');
+   bikeTwo = new Bike(298+35*15, 260, 180, 0, 5,'#24e0c9');
   // bikeThree = new Bike(298, 314, 0, 5, 5,'#55b5');
   // bikeFour = new Bike(263, 233, 0, 5, 5,'#19a497');
   // bikeFive = new Bike(228, 179, 0, 5, 5,'#FFFFFF');
@@ -114,13 +117,14 @@ function drawObjects() {
   _CONTEXT.globalAlpha = 1;
 
   // _CONTEXT.fillStyle = '#000000';
+  imgContainerCtx.clearRect ( 0 , 0 , imgContainerCan.width, imgContainerCan.height );
 
   for (var i = _OBJECTS.length - 1; i >= 0; i--) {
     var bike = _OBJECTS[i];
 
     _CONTEXT.fillStyle = bike.color;
-    _CONTEXT.shadowColor = bike.color;
-    _CONTEXT.shadowBlur = 20;
+    // _CONTEXT.shadowColor = bike.color;
+    // _CONTEXT.shadowBlur = 20;
 
     _CONTEXT.beginPath();
     _CONTEXT.arc(bike.x, bike.y, bike.radius, 0, Math.PI*2);
@@ -130,10 +134,22 @@ function drawObjects() {
     _CONTEXT.shadowColor = '#000000';
     _CONTEXT.shadowBlur = 0;
 
+    imgContainerCtx.shadowColor = '#000000';
+    imgContainerCtx.shadowBlur = 0;
+
+    imgContainerCtx.globalAlpha = 0.1;
+    imgContainerCtx.fillStyle = '#000000';
+    //_CONTEXT.fillRect(0,0,window.innerWidth,window.innerHeight);
+    imgContainerCtx.globalAlpha = 1;
+    console.log(imgCan.height)
+
+    imgCtx.translate(0, 0);
+    imgCtx.rotate(1*Math.PI/180);
+    imgCtx.drawImage(imageObj,0,0, imageObj.width, imageObj.height, 0, 0, imgCan.width, imgCan.height);
+    imgContainerCtx.drawImage(imgCan, bike.x-imgCan.width/2, bike.y-imgCan.height/2);
+
   };
 
-  imgContainerCtx.clearRect ( 0 , 0 , imgContainerCan.width, imgContainerCan.height );
-  imgContainerCtx.drawImage(imgCan, 0, 0);
 
   //_CONTEXT.drawImage(imgContainerCan,0,0);
   // };
