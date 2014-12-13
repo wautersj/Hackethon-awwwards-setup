@@ -24,15 +24,20 @@ Bike.prototype.move = function(bikes) {
     bike = putBikeOnCrossing(bike, borders);
 
     var gonna_collide_with_border = borderCollision(bike, borders);
-    var gonna_collide_with_bike_trail = trailCollistion(bike, bikes);
+    var gonna_collide_with_bike_trail = trailCollision(bike, bikes);
     var want_to_change_direction = wantToChangeDirection();
 
-    if (gonna_collide_with_bike_trail){
-      //var available_directions = availableDirections(bike, bikes);
-
-      bike.direction = get_new_direction(bike.direction, bike.x, bike.y, borders[2], borders[1]);
-      bike.speed = 0;
+    if (false){//(gonna_collide_with_bike_trail || gonna_collide_with_border){
+      var available_directions = availableDirections(bike, bikes, borders);
+      // console.log('available_directions');
+      // console.log(available_directions);
+      //bike.speed = 0;
       //use available directions to get direction
+      if (available_directions.length == 0){
+        bike.speed = 0;
+      } else{
+        bike.direction = available_directions[Math.floor(Math.random()*available_directions.length)];
+      }
     } else if (want_to_change_direction || gonna_collide_with_border){
       bike.direction = get_new_direction(bike.direction, bike.x, bike.y, borders[2], borders[1]);
       //use available directions to get direction
@@ -115,7 +120,7 @@ function wantToChangeDirection(){
   }
 };
 
-function trailCollistion(bike, bikes){
+function trailCollision(bike, bikes){
   var trail_collision = false;
 
   angle = bike.direction * (Math.PI/180);
@@ -137,10 +142,10 @@ function trailCollistion(bike, bikes){
   }
 
   for (var i = bikes.length - 1; i >= 0; i--) {
-    for (var u = bikes[i].location_trail.length - 2; u >= 0; u--) {
+    for (var u = bikes[i].location_trail.length - 1; u >= 0; u--) {
       if ((bikes[i].location_trail[u]['x'] + x_offset) == bike.x && (bikes[i].location_trail[u]['y'] + y_offset) == bike.y){
         trail_collision = true;
-        console.log("collision with trail");
+        // console.log("collision with trail");
       }
     };
   };
@@ -148,12 +153,95 @@ function trailCollistion(bike, bikes){
   return trail_collision;
 };
 
-function availableDirections(bike, bikes){
+function availableDirections(bike, bikes, borders){
+  var directions = [0, 90, 180, 270];
+  var current_direction = bike.direction;
 
+  // remove current direction
+  directions = remove_item(directions, current_direction);
+
+  // remove the opposite direction from possible new directions
+  if (current_direction == 270 || current_direction == 180) {
+    direction_to_remove = parseFloat(current_direction) - parseFloat(180);
+    directions = remove_item(directions, direction_to_remove);
+  } else if (current_direction == 90 || current_direction == 0) {
+    direction_to_remove = parseFloat(current_direction) + parseFloat(180);
+    directions = remove_item(directions, direction_to_remove);
+  }
+
+  // remove direction that collides with trail
+  for (var i = directions.length - 1; i >= 0; i--) {
+    if (directions[i] == 270){
+      x_offset = 0;
+      y_offset = 27;
+      for (var i = bikes.length - 1; i >= 0; i--) {
+        for (var u = bikes[i].location_trail.length - 1; u >= 0; u--) {
+          if ((bikes[i].location_trail[u]['x'] + x_offset) == bike.x && (bikes[i].location_trail[u]['y'] + y_offset) == bike.y){
+            directions = remove_item(directions, directions[i]);
+          }
+        };
+      };
+    } else if (directions[i] == 0) {
+      x_offset = -35;
+      y_offset = 0;
+      for (var i = bikes.length - 1; i >= 0; i--) {
+        for (var u = bikes[i].location_trail.length - 1; u >= 0; u--) {
+          if ((bikes[i].location_trail[u]['x'] + x_offset) == bike.x && (bikes[i].location_trail[u]['y'] + y_offset) == bike.y){
+            directions = remove_item(directions, directions[i]);
+          }
+        };
+      };
+
+    } else if (directions[i] == 90) {
+      x_offset = 0;
+      y_offset = -27;
+      for (var i = bikes.length - 1; i >= 0; i--) {
+        for (var u = bikes[i].location_trail.length - 1; u >= 0; u--) {
+          if ((bikes[i].location_trail[u]['x'] + x_offset) == bike.x && (bikes[i].location_trail[u]['y'] + y_offset) == bike.y){
+            directions = remove_item(directions, directions[i]);
+          }
+        };
+      };
+
+    } else if (directions[i] == 180) {
+      x_offset = 35;
+      y_offset = 0;
+      for (var i = bikes.length - 1; i >= 0; i--) {
+        for (var u = bikes[i].location_trail.length - 1; u >= 0; u--) {
+          if ((bikes[i].location_trail[u]['x'] + x_offset) == bike.x && (bikes[i].location_trail[u]['y'] + y_offset) == bike.y){
+            directions = remove_item(directions, directions[i]);
+          }
+        };
+      };
+    }
+  };
+
+
+  // remove directions that collide with border
+  // top/bottom border
+  if (bike.y == borders[0]) {
+    direction_to_remove = parseFloat(270);
+    directions = remove_item(directions, direction_to_remove);
+  } else if (bike.y == borders[2]) {
+    direction_to_remove = parseFloat(90);
+    directions = remove_item(directions, direction_to_remove);
+  }
+
+  // left/right border
+  if (bike.x == borders[3]) {
+    direction_to_remove = parseFloat(180);
+    directions = remove_item(directions, direction_to_remove);
+  } else if (bike.x == borders[1]) {
+    direction_to_remove = parseFloat(0);
+    directions = remove_item(directions, direction_to_remove);
+  }
+
+
+  return directions;
 };
 
 function get_new_direction(current_direction, x, y, bottom_border, right_border) {
-  //console.log("current_direction: " + current_direction);
+  // console.log("current_direction: " + current_direction);
   var directions = [ 0, 90, 180, 270];
 
   // remove current direction from possible new directions

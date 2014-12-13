@@ -1,31 +1,38 @@
 $(document).ready(init);
 
 var _CANVAS;
-var _IMG_CANVAS;
 var _CONTEXT;
-var _IMG_CONTEXT;
+var imgCan;
+var imgCtx;
+var imgContainerCan;
+var imgContainerCtx;
 
 var _FPS;
 var _OBJECTS;
 var bikeOne;
 var bikeTwo
 
-var img = new Image();
-img.onload = function() {
-  img.width *= 0.5;
-  img.height *= 0.5;
-}
-img.src = "img/lightBike.svg";
+var imageObj = new Image();
+imageObj.src = "img/lightBike.svg";
 
 function init() {
+
   _CANVAS = document.getElementById('myCanvas');
   _CONTEXT = _CANVAS.getContext('2d');
 
-  _IMG_CANVAS = document.createElement('canvas');
-  _IMG_CANVAS.width = 150;
-  _IMG_CANVAS.height = 140;
-  _IMG_CONTEXT = _IMG_CANVAS.getContext('2d');
-  _IMG_CONTEXT.drawImage(img, 0, 0);
+  imgContainerCan = document.getElementById("imgCanvas");
+  imgContainerCtx = imgContainerCan.getContext("2d");
+
+  imgCan = document.createElement("canvas");
+  imgCtx = imgCan.getContext("2d");
+
+  imageObj.onload = function() {
+    imgCan.width = this.width;
+    imgCan.height = this.height;
+  };
+
+
+  // _CONTEXT.drawImage(imgContainerCan,0,0);
 
   _FPS = 30;
   _OBJECTS = [];
@@ -53,6 +60,8 @@ function gameStart(){
   // _OBJECTS.push(bikeEight);
   // console.log(_OBJECTS);
 
+
+
   // var colors = [ "#19a497", "#24e0c9", "#105b50", "#FFFFFF" ]
 
   // for (var i = 2; i > 0; i--) {
@@ -72,14 +81,16 @@ function render() {
       drawObjects();
       render();
     });
-  }, 100/_FPS);
+  }, 1000/_FPS);
 }
 
 function updateCanvas() {
   if(_CANVAS.width!==window.innerWidth)
       _CANVAS.width = window.innerWidth;
+      imgContainerCan.width = window.innerWidth;
   if(_CANVAS.height!==window.innerHeight)
       _CANVAS.height = window.innerHeight;
+      imgContainerCan.heigth = window.innerHeigth;
 }
 
 function updateObjects() {
@@ -100,7 +111,7 @@ function drawObjects() {
   //_CONTEXT.fillRect(0,0,window.innerWidth,window.innerHeight);
   _CONTEXT.globalAlpha = 1;
 
-  //_CONTEXT.fillStyle = '#000000';
+  // _CONTEXT.fillStyle = '#000000';
 
   for (var i = _OBJECTS.length - 1; i >= 0; i--) {
     var bike = _OBJECTS[i];
@@ -117,15 +128,15 @@ function drawObjects() {
     _CONTEXT.shadowColor = '#000000';
     _CONTEXT.shadowBlur = 0;
 
-    _CONTEXT.globalAlpha = 1;
-    _CONTEXT.drawImage(_IMG_CANVAS, 200, 200);
-    // _CONTEXT.fillStyle = "#000000";
-    // _CONTEXT.beginPath();
-    // _CONTEXT.arc(bike.x, bike.y, 0.5, 0, Math.PI*2);
-    // _CONTEXT.closePath();
-    // _CONTEXT.fill();
-
   };
+  //imgContainerCtx.clearRect ( 0 , 0 , imgContainerCan.width, imgContainerCan.height );
+
+  console.log("image loaded?");
+  console.log(imageObj);
+  imgContainerCtx.drawImage(imageObj, 0, 0);
+
+  //_CONTEXT.drawImage(imgContainerCan,0,0);
+  // };
 
 
 }
