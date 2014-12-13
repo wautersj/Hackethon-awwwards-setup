@@ -2,6 +2,7 @@ var Bike = function (x, y, direction, speed, radius, color) {
   this.x = x;
   this.y = y;
   this.direction = direction;
+  this.rotation = 0;
   this.speed = speed;
   this.radius = radius;
   this.color = color;
@@ -39,13 +40,20 @@ Bike.prototype.move = function(bikes) {
         bike.direction = available_directions[Math.floor(Math.random()*available_directions.length)];
       }
     } else if (want_to_change_direction || gonna_collide_with_border){
-      bike.direction = get_new_direction(bike.direction, bike.x, bike.y, borders[2], borders[1]);
+      var newTargetDirection = get_new_direction(bike.direction, bike.x, bike.y, borders[2], borders[1]);
+      bike.direction = newTargetDirection;
+
+      //$(bike).animate({direction: newTargetDirection}, 200);
+
       //use available directions to get direction
       //still need to write algortime :p
     }
 
     bike = logBikeLocation(bike);
   }
+
+  bike.rotation = bike.direction;
+  //bike.rotation += (bike.direction-bike.rotation)/4;
 };
 
 function moveBike(bike){

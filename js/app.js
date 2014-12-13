@@ -15,7 +15,7 @@ var bikeTwo
 var imageObj;
 
 function init() {
-  _FPS = 30;
+  _FPS = 90;
   _OBJECTS = [];
 
   _CANVAS = document.getElementById('myCanvas');
@@ -87,7 +87,7 @@ function gameStart(){
 }
 
 function render() {
-  setTimeout(function(){
+  //setTimeout(function(){
     window.requestAnimationFrame(function(){
       updateCanvas();
       updateObjects();
@@ -95,7 +95,7 @@ function render() {
       drawObjects();
       render();
     });
-  }, 100/_FPS);
+  //}, 1000/_FPS);
 }
 
 function updateCanvas() {
@@ -156,7 +156,7 @@ function drawObjects() {
     imgContainerCtx.clearRect ( 0 , 0 , imgCan.width, imgCan.height );
     imgContainerCtx.save();
     imgContainerCtx.translate(bike.x, bike.y);
-  	imgContainerCtx.rotate(bike.direction*(Math.PI/180));
+  	imgContainerCtx.rotate(bike.rotation*(Math.PI/180));
   	imgContainerCtx.drawImage(imgCan, -(imgCan.width/2), -(imgCan.height/2));
   	imgContainerCtx.restore();
   };
