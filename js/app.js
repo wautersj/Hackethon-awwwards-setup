@@ -22,23 +22,33 @@ function init() {
 }
 
 function getImageData() {
+	
+
+	//image.src = "assets/heart.jpg";
+	//image.src = "assets/logo.jpg";
+	//image.src = "assets/circle_icon.png";
+	//loadImage("assets/hackethon.jpg",1);
+	loadImage("assets/logo.png", 1);
+
+	render();
+   	startCreating();
+}
+
+function loadImage(path, scale){
 	imgCanvas = document.createElement('canvas');
 	imgContext = imgCanvas.getContext('2d');	
 
 	var image = new Image();
 	image.onload = function(){
 
-		imgCanvas.width = image.width;
-   		imgCanvas.height = image.height;
-   		imgContext.drawImage(image,0,0);
+		imgCanvas.width = image.width*scale;
+   		imgCanvas.height = image.height*scale;
+   		imgContext.drawImage(image,0,0, image.width, image.height, 0,0,imgCanvas.width, imgCanvas.height);
 
-   		render();
-   		startCreating();
+   		
 	};
 
-	//image.src = "assets/heart.jpg";
-	image.src = "assets/logo.jpg";
-	//image.src = "assets/circle_icon.png";
+	image.src = path;
 }
 
 function render() {
@@ -69,7 +79,7 @@ function startCreating() {
 		window.requestAnimationFrame(function(){
 			createPixels();
 
-			setTimeout(job, 12);
+			setTimeout(job, 15);
 		});
 	}
 
@@ -77,42 +87,44 @@ function startCreating() {
 }
 
 function createPixels() {
-	for (var i = 40; i >= 0; i--) {
-		var x = Math.floor(Math.random()*imgCanvas.width);
-	    var y = Math.floor(Math.random()*imgCanvas.height);
-		var randomPixel = imgContext.getImageData(x, y, 1, 1).data;
+	if(imgContext){
+		for (var i = 40; i >= 0; i--) {
+			var x = Math.floor(Math.random()*imgCanvas.width);
+		    var y = Math.floor(Math.random()*imgCanvas.height);
+			var randomPixel = imgContext.getImageData(x, y, 1, 1).data;
 
-		var red = randomPixel[0];
-		var green = randomPixel[1];
-		var blue = randomPixel[2];
+			var red = randomPixel[0];
+			var green = randomPixel[1];
+			var blue = randomPixel[2];
 
-		if(red || green || blue){
-			var pixel = {
-				x: x,
-				y: y,
-				radius: 0,
-				opacity: 1,
-				color: {
-					red: red,
-					green: green,
-					blue: blue
+			if(red || green || blue){
+				var pixel = {
+					x: ((window.innerWidth/2) - (imgCanvas.width/2)) + x,
+					y: ((window.innerHeight/2) - (imgCanvas.height/2)) + y,
+					radius: 0,
+					opacity: 1,
+					color: {
+						red: red,
+						green: green,
+						blue: blue
+					}
 				}
+
+				objects.push(pixel);
+
+				
 			}
-
-			objects.push(pixel);
-
-			
-		}
-	};
+		};
+	}
 }
 
 function updateObjects(){
 	for (var i = objects.length - 1; i >= 0; i--) {
 		var pixel = objects[i];
 
-		pixel.radius++;
+		pixel.radius+=1.5;
 
-		if(pixel.radius>8){
+		if(pixel.radius>3){
 			if(pixel.opacity>0){
 				pixel.opacity -=0.1;
 			} else {
@@ -126,8 +138,13 @@ function updateObjects(){
 }
 
 function drawObjects(){
-	//draw part 1 of dual effect screen
-	_CONTEXT.clearRect(0, 0, window.innerWidth, window.innerHeight);
+	_CONTEXT.shadowBlur = 0;
+	_CONTEXT.globalAlpha = 0.1;
+	_CONTEXT.fillStyle = '#1C1C1C';
+	_CONTEXT.fillRect(0,0,window.innerWidth,window.innerHeight);
+	_CONTEXT.globalAlpha = 1;
+
+   	//_CONTEXT.shadowBlur = 30;
 
 	for (var i = objects.length - 1; i >= 0; i--) {
 		var pixel = objects[i];
@@ -136,8 +153,9 @@ function drawObjects(){
 		//_CONTEXT.fillRect(x, y, 10, 10 );
 		_CONTEXT.globalAlpha = pixel.opacity;
 		_CONTEXT.beginPath();
-		_CONTEXT.arc(pixel.x, pixel.y, pixel.radius, 0, 2 * Math.PI, false);
 		_CONTEXT.fillStyle = 'rgba('+color.red+','+color.green+','+color.blue+', 255)';
+		_CONTEXT.arc(pixel.x, pixel.y, pixel.radius, 0, 2 * Math.PI, false);
+		_CONTEXT.shadowColor = 'rgba('+color.red+','+color.green+','+color.blue+', 255)';
 		_CONTEXT.fill();
 	};
 }
