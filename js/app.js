@@ -9,10 +9,12 @@ var imgContext;
 
 var rects;
 var drops;
+var mX;
+var mY;
 
 function init() {
 	//Caching, initializing some objects.
-	_FPS = 15 ;
+	_FPS = 25;
 	_CANVAS = document.getElementById('myCanvas');
 	_CONTEXT = _CANVAS.getContext("2d");
 
@@ -20,12 +22,38 @@ function init() {
 	drops = [];
 
 	//Get asset data first.
-	createPixels();
 	render();
 
-	setInterval(function(){
-		createDrop(Math.round(Math.random()*window.innerWidth), Math.round(Math.random()*15)+5);
-	},750);
+	var task = function(){
+		setTimeout(function(){
+			createDrop(Math.round(Math.random()*window.innerWidth), Math.round(Math.random()*15)+5);
+			window.requestAnimationFrame(task);
+		},750);
+	}
+
+	task();
+
+	mX = 2;
+	mY = 2;
+
+	//setFocus();
+	//setInterval(setFocus,800);
+	createPixels(mX,mY);
+}
+
+function setFocus(){
+	if(mX>0){
+		createPixels(mX,mX);
+		//createPixels(mX,mY);
+
+		if(mX>1){
+			mX--;
+			mY--;
+		} else {
+			mX-=0.5;
+			mY-=0.5;
+		}
+	}
 }
 
 
@@ -52,13 +80,14 @@ function updateCanvas(){
 }
 
 
-function createPixels() {
-	var tileWidth = 35*3;
-	var tileHeight = 27*3;
+function createPixels(multiplyerX,multiplyerY) {
+	var tileWidth = 35*multiplyerX;
+	var tileHeight = 27*multiplyerY;
 
 	var pixelsOnX = Math.floor(window.innerWidth/tileWidth);
 	var pixelsOnY = Math.floor(window.innerHeight/tileHeight);
 
+	rects = [];
 	for (var pox = pixelsOnX; pox >= 0; pox--) {
 		for (var poy = pixelsOnY; poy >= 0; poy--) {
 			rects.push({
@@ -74,13 +103,13 @@ function createPixels() {
 	};
 }
 
-function createDrop(y, speed){
+function createDrop(x, speed){
 	var halfWidth = (window.innerWidth/2);
 	var halfHeight = (window.innerHeight/2);
 
 	var newDrop = {
-		x: y,
-		y: -100,
+		x: x,
+		y: window.innerHeight+100,
 		speed: speed
 	}
 
@@ -92,9 +121,9 @@ function updateObjects(){
 		var drop = drops[i];
 
 		//drop.x += 20;
-		drop.y+=drop.speed;
+		drop.y-=drop.speed;
 
-		if(drop.y>window.innerHeight){
+		if(drop.y<-100){
 			var index = drops.indexOf(drop);
 			drops.splice(index,1);
 		}
@@ -110,7 +139,7 @@ function updateObjects(){
 
 			var distance = lineDistance(drop,pixel);
 
-			var maxDistance = 150;
+			var maxDistance = 160;
 			if(distance<maxDistance){
 				var relative = (maxDistance-distance)/maxDistance;
 				relative *= pixel._opacity;
