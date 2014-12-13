@@ -27,6 +27,7 @@ function getImageData() {
 
 	var image = new Image();
 	image.onload = function(){
+
 		imgCanvas.width = image.width;
    		imgCanvas.height = image.height;
    		imgContext.drawImage(image,0,0);
@@ -36,8 +37,8 @@ function getImageData() {
 	};
 
 	//image.src = "assets/heart.jpg";
-	//image.src = "assets/logo.jpg";
-	image.src = "assets/circle_icon.png";
+	image.src = "assets/logo.jpg";
+	//image.src = "assets/circle_icon.png";
 }
 
 function render() {
@@ -76,7 +77,7 @@ function startCreating() {
 }
 
 function createPixels() {
-	for (var i = 8; i >= 0; i--) {
+	for (var i = 40; i >= 0; i--) {
 		var x = Math.floor(Math.random()*imgCanvas.width);
 	    var y = Math.floor(Math.random()*imgCanvas.height);
 		var randomPixel = imgContext.getImageData(x, y, 1, 1).data;
@@ -111,11 +112,10 @@ function updateObjects(){
 
 		pixel.radius++;
 
-		if(pixel.radius>15){
+		if(pixel.radius>8){
 			if(pixel.opacity>0){
 				pixel.opacity -=0.1;
 			} else {
-				//console.log('delete');
 				if(pixel.opacity<=0.1){
 					var index = objects.indexOf(pixel);
 					objects.splice(index,1);
