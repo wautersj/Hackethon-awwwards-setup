@@ -12,10 +12,11 @@ var _OBJECTS;
 var bikeOne;
 var bikeTwo
 
-var imageObj = new Image();
-imageObj.src = "img/lightBike.svg";
+var imageObj;
 
 function init() {
+  _FPS = 30;
+  _OBJECTS = [];
 
   _CANVAS = document.getElementById('myCanvas');
   _CONTEXT = _CANVAS.getContext('2d');
@@ -26,18 +27,19 @@ function init() {
   imgCan = document.createElement("canvas");
   imgCtx = imgCan.getContext("2d");
 
+  imageObj = new Image();
   imageObj.onload = function() {
-    imgCan.width = this.width;
-    imgCan.height = this.height;
+    //imgCan.width = this.width*0.3;
+    //imgCan.height = this.height*0.3;
+    imgCtx.drawImage(this,0,0, this.width, this.height, 0, 0, imgCan.width, imgCan.height);
+
+    gameStart();
   };
+ 
+  imageObj.src = "img/lightBike.svg";
 
 
   // _CONTEXT.drawImage(imgContainerCan,0,0);
-
-  _FPS = 30;
-  _OBJECTS = [];
-
-  gameStart();
 }
 
 function gameStart(){
@@ -85,12 +87,12 @@ function render() {
 }
 
 function updateCanvas() {
-  if(_CANVAS.width!==window.innerWidth)
-      _CANVAS.width = window.innerWidth;
-      imgContainerCan.width = window.innerWidth;
-  if(_CANVAS.height!==window.innerHeight)
-      _CANVAS.height = window.innerHeight;
-      imgContainerCan.heigth = window.innerHeigth;
+  if(_CANVAS.width!==window.innerWidth){
+  	_CANVAS.width = imgContainerCan.width = window.innerWidth;
+  }
+  if(_CANVAS.height!==window.innerHeight){
+  	_CANVAS.height = imgContainerCan.height = window.innerHeight;
+  }
 }
 
 function updateObjects() {
@@ -129,11 +131,9 @@ function drawObjects() {
     _CONTEXT.shadowBlur = 0;
 
   };
-  //imgContainerCtx.clearRect ( 0 , 0 , imgContainerCan.width, imgContainerCan.height );
 
-  console.log("image loaded?");
-  console.log(imageObj);
-  imgContainerCtx.drawImage(imageObj, 0, 0);
+  imgContainerCtx.clearRect ( 0 , 0 , imgContainerCan.width, imgContainerCan.height );
+  imgContainerCtx.drawImage(imgCan, 0, 0);
 
   //_CONTEXT.drawImage(imgContainerCan,0,0);
   // };
