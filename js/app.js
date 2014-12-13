@@ -4,81 +4,34 @@ var _FPS;
 var _CANVAS;
 var _CONTEXT;
 
-var imgCanvas;
-var imgContext;
-
 var rects;
-var drops;
-var mX;
-var mY;
+var rimples;
+var rimpleRadius = 100;
 
 function init() {
 	//Caching, initializing some objects.
-	_FPS = 25;
+	_FPS = 30;
 	_CANVAS = document.getElementById('myCanvas');
 	_CONTEXT = _CANVAS.getContext("2d");
 
 	rects = [];
-	drops = [];
+	rimples = [];
 
 	//Get asset data first.
 	render();
 
-	var task = function(){
+	createPixels(0.5,0.5);
+
+	var  task = function(){
+		createRimple();
+
 		setTimeout(function(){
-			createDrop(Math.round(Math.random()*window.innerWidth), Math.round(Math.random()*15)+5);
 			window.requestAnimationFrame(task);
-		},750);
+		}, 1000)
 	}
 
 	task();
-
-	mX = 2;
-	mY = 2;
-
-	//setFocus();
-	//setInterval(setFocus,800);
-	createPixels(mX,mY);
 }
-
-function setFocus(){
-	if(mX>0){
-		createPixels(mX,mX);
-		//createPixels(mX,mY);
-
-		if(mX>1){
-			mX--;
-			mY--;
-		} else {
-			mX-=0.5;
-			mY-=0.5;
-		}
-	}
-}
-
-
-function render() {
-	//Add delay to achieve maximum set framerate.
-	setTimeout(function() {
-		window.requestAnimationFrame(function(){
-			//Recalling Render, to render next 'frame'.
-			window.render();
-
-			updateCanvas();
-			updateObjects();
-			drawObjects();
-		});
-	}, 1000/_FPS);
-}
-
-function updateCanvas(){
-	if(_CANVAS.width !== window.innerWidth)
-		_CANVAS.width = window.innerWidth;
-
-	if(_CANVAS.height !== window.innerHeight)
-		_CANVAS.height = window.innerHeight;
-}
-
 
 function createPixels(multiplyerX,multiplyerY) {
 	var tileWidth = 35*multiplyerX;
@@ -96,58 +49,83 @@ function createPixels(multiplyerX,multiplyerY) {
 				width: tileWidth,
 				height: tileHeight,
 				opacity: 0,
-				_opacity: Math.random(),
+				_opacity: Math.random()*0.50 + 0.25,
 				inRange: false
 			});
 		};	
 	};
 }
 
-function createDrop(x, speed){
-	var halfWidth = (window.innerWidth/2);
-	var halfHeight = (window.innerHeight/2);
+function createRimple(){
+	var rimple = {
+		value:2,
+		radius:30
+	};
 
-	var newDrop = {
-		x: x,
-		y: window.innerHeight+100,
-		speed: speed
-	}
+	rimples.push(rimple);
+}
 
-	drops.push(newDrop)
+function render() {
+	//Add delay to achieve maximum set framerate.
+	setTimeout(function() {
+		window.requestAnimationFrame(function(){
+			//Recalling Render, to render next 'frame'.
+			render();
+
+			updateCanvas();
+			updateObjects();
+			drawObjects();
+		});
+	}, 1000/_FPS);
+}
+
+function updateCanvas(){
+	if(_CANVAS.width !== window.innerWidth)
+		_CANVAS.width = window.innerWidth;
+
+	if(_CANVAS.height !== window.innerHeight)
+		_CANVAS.height = window.innerHeight;
 }
 
 function updateObjects(){
-	for (var i = drops.length - 1; i >= 0; i--) {
-		var drop = drops[i];
+	var canvasCenter = {
+		x: _CANVAS.width/2,
+		y: _CANVAS.height/2
+	}
 
-		//drop.x += 20;
-		drop.y-=drop.speed;
+	for (var i = rimples.length - 1; i >= 0; i--) {
+		var rimple = rimples[i];
+		rimple.value += 7;
+		//rimple.radius += 2;
 
-		if(drop.y<-100){
-			var index = drops.indexOf(drop);
-			drops.splice(index,1);
+		if(rimple.value > (_CANVAS.width/2)+rimpleRadius){
+			var index = rimples.indexOf(rimple);
+			rimples.splice(index,1);
 		}
 	};
-
 
 	for (var j = rects.length - 1; j >= 0; j--) {
 		var pixel = rects[j];
 		pixel.inRange = false;
 
-		for (var k = drops.length - 1; k >= 0; k--) {
-			var drop = drops[k];
+		
+		for (var k = rimples.length - 1; k >= 0; k--) {
+			var rimple = rimples[k];
 
-			var distance = lineDistance(drop,pixel);
+			var distance = lineDistance(canvasCenter,pixel);
 
-			var maxDistance = 160;
-			if(distance<maxDistance){
-				var relative = (maxDistance-distance)/maxDistance;
-				relative *= pixel._opacity;
-				pixel.opacity = relative;
+			if(distance>rimple.value && distance<(rimple.value+rimple.radius)){
+				var range = distance - rimple.value;
+
+				var relative = range / rimple.radius;
+				var relative2 = (relative*2)-1;
+				var relative3 = 1 - Math.abs(relative2);
 
 				pixel.inRange = true;
+				pixel.opacity = relative3 * pixel._opacity;
 			}
 		};
+		
 
 		if(pixel.inRange==false){
 			pixel.opacity = 0;
