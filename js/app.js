@@ -36,6 +36,15 @@ function init() {
     // imgCtx.rotate(10*Math.PI/180);
     imgCtx.drawImage(this,0,0, this.width, this.height, 0, 0, imgCan.width, imgCan.height);
 
+    /*
+	 imgCan.width = this.width*0.3;
+    imgCan.height = this.width*0.3;
+    console.log(imgCan.width/2)
+    // imgCtx.translate(17, -13);
+    // imgCtx.rotate(10*Math.PI/180);
+    imgCtx.drawImage(this,0,0, this.width, this.height, 0, (imgCan.height/2 - ((this.height*0.3)/2)), imgCan.width, this.height*0.3);
+    */
+
     gameStart();
   };
 
@@ -143,16 +152,13 @@ function drawObjects() {
     imgContainerCtx.globalAlpha = 1;
     console.log(imgCan.height)
 
-    imgCtx.translate(0, 0);
-    imgCtx.rotate(1*Math.PI/180);
-    imgCtx.drawImage(imageObj,0,0, imageObj.width, imageObj.height, 0, 0, imgCan.width, imgCan.height);
-    imgContainerCtx.drawImage(imgCan, bike.x-imgCan.width/2, bike.y-imgCan.height/2);
-
+    //Drawing rotated bike.
+    imgContainerCtx.clearRect ( 0 , 0 , imgCan.width, imgCan.height );
+    imgContainerCtx.save(); 
+    imgContainerCtx.translate(bike.x, bike.y);
+	imgContainerCtx.rotate(120*(Math.PI/180));
+	imgContainerCtx.drawImage(imgCan, -(imgCan.width/2), -(imgCan.height/2));
+	imgContainerCtx.restore();
   };
-
-
-  //_CONTEXT.drawImage(imgContainerCan,0,0);
-  // };
-
 
 }
