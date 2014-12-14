@@ -28,10 +28,10 @@ Bike.prototype.move = function(bikes) {
     var gonna_collide_with_bike_trail = trailCollision(bike, bikes);
     var want_to_change_direction = wantToChangeDirection();
 
-    if (false){//(gonna_collide_with_bike_trail || gonna_collide_with_border){
+    if (gonna_collide_with_bike_trail || gonna_collide_with_border){
       var available_directions = availableDirections(bike, bikes, borders);
-      // console.log('available_directions');
-      // console.log(available_directions);
+      console.log('gonna collide, available_directions');
+      console.log(available_directions);
       //bike.speed = 0;
       //use available directions to get direction
       if (available_directions.length == 0){
@@ -39,9 +39,13 @@ Bike.prototype.move = function(bikes) {
       } else{
         bike.direction = available_directions[Math.floor(Math.random()*available_directions.length)];
       }
-    } else if (want_to_change_direction || gonna_collide_with_border){
-      var newTargetDirection = get_new_direction(bike.direction, bike.x, bike.y, borders[2], borders[1]);
-      bike.direction = newTargetDirection;
+    } else if (want_to_change_direction){
+      var available_directions = availableDirections(bike, bikes, borders);
+      console.log('wanne change direction, available_directions');
+      console.log(available_directions);
+      if (available_directions.length != 0){
+        bike.direction = available_directions[Math.floor(Math.random()*available_directions.length)];
+      }
 
       //$(bike).animate({direction: newTargetDirection}, 200);
 
@@ -182,9 +186,9 @@ function availableDirections(bike, bikes, borders){
     if (directions[i] == 270){
       x_offset = 0;
       y_offset = 27;
-      for (var i = bikes.length - 1; i >= 0; i--) {
-        for (var u = bikes[i].location_trail.length - 1; u >= 0; u--) {
-          if ((bikes[i].location_trail[u]['x'] + x_offset) == bike.x && (bikes[i].location_trail[u]['y'] + y_offset) == bike.y){
+      for (var o = bikes.length - 1; o >= 0; o--) {
+        for (var u = bikes[o].location_trail.length - 1; u >= 0; u--) {
+          if ((bikes[o].location_trail[u]['x'] + x_offset) == bike.x && (bikes[o].location_trail[u]['y'] + y_offset) == bike.y){
             directions = remove_item(directions, directions[i]);
           }
         };
@@ -192,9 +196,9 @@ function availableDirections(bike, bikes, borders){
     } else if (directions[i] == 0) {
       x_offset = -35;
       y_offset = 0;
-      for (var i = bikes.length - 1; i >= 0; i--) {
-        for (var u = bikes[i].location_trail.length - 1; u >= 0; u--) {
-          if ((bikes[i].location_trail[u]['x'] + x_offset) == bike.x && (bikes[i].location_trail[u]['y'] + y_offset) == bike.y){
+      for (var o = bikes.length - 1; o >= 0; o--) {
+        for (var u = bikes[o].location_trail.length - 1; u >= 0; u--) {
+          if ((bikes[o].location_trail[u]['x'] + x_offset) == bike.x && (bikes[o].location_trail[u]['y'] + y_offset) == bike.y){
             directions = remove_item(directions, directions[i]);
           }
         };
@@ -203,9 +207,9 @@ function availableDirections(bike, bikes, borders){
     } else if (directions[i] == 90) {
       x_offset = 0;
       y_offset = -27;
-      for (var i = bikes.length - 1; i >= 0; i--) {
-        for (var u = bikes[i].location_trail.length - 1; u >= 0; u--) {
-          if ((bikes[i].location_trail[u]['x'] + x_offset) == bike.x && (bikes[i].location_trail[u]['y'] + y_offset) == bike.y){
+      for (var o = bikes.length - 1; o >= 0; o--) {
+        for (var u = bikes[o].location_trail.length - 1; u >= 0; u--) {
+          if ((bikes[o].location_trail[u]['x'] + x_offset) == bike.x && (bikes[o].location_trail[u]['y'] + y_offset) == bike.y){
             directions = remove_item(directions, directions[i]);
           }
         };
@@ -214,9 +218,9 @@ function availableDirections(bike, bikes, borders){
     } else if (directions[i] == 180) {
       x_offset = 35;
       y_offset = 0;
-      for (var i = bikes.length - 1; i >= 0; i--) {
-        for (var u = bikes[i].location_trail.length - 1; u >= 0; u--) {
-          if ((bikes[i].location_trail[u]['x'] + x_offset) == bike.x && (bikes[i].location_trail[u]['y'] + y_offset) == bike.y){
+      for (var o = bikes.length - 1; o >= 0; o--) {
+        for (var u = bikes[o].location_trail.length - 1; u >= 0; u--) {
+          if ((bikes[o].location_trail[u]['x'] + x_offset) == bike.x && (bikes[o].location_trail[u]['y'] + y_offset) == bike.y){
             directions = remove_item(directions, directions[i]);
           }
         };
