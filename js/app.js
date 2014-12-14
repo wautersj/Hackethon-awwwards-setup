@@ -7,6 +7,7 @@ var _CONTEXT;
 var rects;
 var rimples;
 var rimpleRadius = 100;
+var rimplesCount = 0;
 
 function init() {
 	//Caching, initializing some objects.
@@ -22,15 +23,14 @@ function init() {
 
 	createPixels(0.5,0.5);
 
-	var  task = function(){
-		createRimple();
-
-		setTimeout(function(){
-			window.requestAnimationFrame(task);
-		}, 1000)
+	var job = function(){
+		window.requestAnimationFrame(function(){
+			createRimple();
+			setTimeout(job,1000)
+		});
 	}
 
-	task();
+	job();
 }
 
 function createPixels(multiplyerX,multiplyerY) {
@@ -67,10 +67,16 @@ function createPixels(multiplyerX,multiplyerY) {
 function createRimple(){
 	var rimple = {
 		value:2,
-		radius:30
+		radius:30,
+		color: '#FFFFFF'
 	};
 
+	if(rimplesCount%3){
+		rimple.color = '#19a497';
+	}
+
 	rimples.push(rimple);
+	rimplesCount++;
 }
 
 function render() {
@@ -131,6 +137,7 @@ function updateObjects(){
 
 				pixel.inRange = true;
 				pixel.opacity = relative3 * pixel._opacity;
+				pixel.color = rimple.color;
 			}
 		};
 		
