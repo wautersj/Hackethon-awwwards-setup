@@ -8,7 +8,14 @@ var Bike = function (x, y, direction, speed, radius, color) {
   this.color = color;
   this.last_x = x;
   this.last_y = y;
+  this.next_x = null;
+  this.next_y = null;
+  var location = {
+    x: x,
+    y: y
+  }
   this.location_trail = []
+  this.location_trail.unshift(location);
 };
 
 Bike.prototype.move = function(bikes) {
@@ -30,8 +37,9 @@ Bike.prototype.move = function(bikes) {
 
     if (gonna_collide_with_bike_trail || gonna_collide_with_border){
       var available_directions = availableDirections(bike, bikes, borders);
-      console.log('gonna collide, available_directions');
-      console.log(available_directions);
+      // console.log('gonna collide, available_directions');
+      // console.log(available_directions);
+      direction = pickDirection(available_directions);
       //bike.speed = 0;
       //use available directions to get direction
       if (available_directions.length == 0){
@@ -41,8 +49,11 @@ Bike.prototype.move = function(bikes) {
       }
     } else if (want_to_change_direction){
       var available_directions = availableDirections(bike, bikes, borders);
-      console.log('wanne change direction, available_directions');
-      console.log(available_directions);
+      // console.log('wanne change direction, available_directions');
+      // console.log(available_directions);
+
+      direction = pickDirection(available_directions);
+
       if (available_directions.length != 0){
         bike.direction = available_directions[Math.floor(Math.random()*available_directions.length)];
       }
@@ -54,11 +65,40 @@ Bike.prototype.move = function(bikes) {
     }
 
     bike = logBikeLocation(bike);
+    bike = updateNextLocation(bike);
   }
 
   bike.rotation = bike.direction;
   //bike.rotation += (bike.direction-bike.rotation)/4;
 };
+
+function pickDirection(directions){
+
+}
+
+function updateNextLocation(bike){
+  var x_offset = 0;
+  var y_offset = 27;
+
+  if (bike.direction == 270){
+    x_offset = 0;
+    y_offset = -27;
+  } else if (bike.direction == 0) {
+    x_offset = 35;
+    y_offset = 0;
+  } else if (bike.direction == 90) {
+    x_offset = 0;
+    y_offset = 27;
+  } else if (bike.direction == 180) {
+    x_offset = -35;
+    y_offset = 0;
+  }
+
+  bike.next_x = bike.last_x + x_offset;
+  bike.next_y = bike.last_y + y_offset;
+
+  return bike;
+}
 
 function moveBike(bike){
   angle = bike.direction * (Math.PI/180);
@@ -109,7 +149,8 @@ function logBikeLocation(bike){
     y: bike.y
   }
 
-  bike.location_trail.push(location)
+  bike.location_trail.unshift(location);
+  //bike.location_trail = bike.location_trail.slice(0,7);
 
   return bike;
 };
@@ -124,7 +165,7 @@ function borderCollision(bike, borders){
 };
 
 function wantToChangeDirection(){
-  var randomnumber = Math.floor(Math.random() * (10 - 1 + 1)) + 1;
+  var randomnumber = Math.floor(Math.random() * (20 - 1 + 1)) + 1;
   if (randomnumber == 5){
     return true;
   } else {
@@ -141,23 +182,30 @@ function trailCollision(bike, bikes){
 
   if (bike.direction == 270){
     x_offset = 0;
-    y_offset = 27;
+    y_offset = -27;
   } else if (bike.direction == 0) {
-    x_offset = -35;
+    x_offset = 35;
     y_offset = 0;
   } else if (bike.direction == 90) {
     x_offset = 0;
-    y_offset = -27;
+    y_offset = 27;
   } else if (bike.direction == 180) {
-    x_offset = 35;
+    x_offset = -35;
     y_offset = 0;
   }
 
   for (var i = bikes.length - 1; i >= 0; i--) {
     for (var u = bikes[i].location_trail.length - 1; u >= 0; u--) {
-      if ((bikes[i].location_trail[u]['x'] + x_offset) == bike.x && (bikes[i].location_trail[u]['y'] + y_offset) == bike.y){
+      // check trail
+      if (bikes[i].location_trail[u]['x'] == (bike.x + x_offset) && bikes[i].location_trail[u]['y'] == (bike.y + y_offset)){
         trail_collision = true;
-        // console.log("collision with trail");
+      //check next location of other bikes
+      } else if((bikes[i].next_x) == (bike.x + x_offset) &&
+                (bikes[i].next_y) == (bike.y + y_offset) &&
+                (bikes[i] != bike)){
+        console.log("other bike is heading here");
+        console.log("from bike: " + i)
+        trail_collision = true;
       }
     };
   };
