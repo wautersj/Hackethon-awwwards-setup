@@ -6,7 +6,7 @@ var _CONTEXT;
 
 var rects;
 var rimples;
-var rimpleRadius = 100;
+var rimpleRadius = 70;
 var rimplesCount = 0;
 
 function init() {
@@ -21,7 +21,7 @@ function init() {
 	//Get asset data first.
 	render();
 
-	createPixels(0.5,0.5);
+	createPixels(1,1);
 
 	var job = function(){
 		window.requestAnimationFrame(function(){
@@ -67,7 +67,7 @@ function createPixels(multiplyerX,multiplyerY) {
 function createRimple(){
 	var rimple = {
 		value:2,
-		radius:30,
+		radius:rimpleRadius,
 		color: '#FFFFFF'
 	};
 
