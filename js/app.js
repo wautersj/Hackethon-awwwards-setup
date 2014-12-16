@@ -9,58 +9,117 @@ var imgContext;
 
 var objects;
 
+var dirigent;
+var dirigentRelative;
+
+var colors;
+var positions;
+var particles;
+
 function init() {
 	//Caching, initializing some objects.
-	_FPS = 30 ;
+	_FPS = 60 ;
 	_CANVAS = document.getElementById('myCanvas');
 	_CONTEXT = _CANVAS.getContext("2d");
 
 	objects = [];
 
-	//Get asset data first.
-	getImageData();
-}
-
-function getImageData() {
-	render();
-
-	var currentImage = 0;
-
-	var images = [];
-	images.push('assets/heart.png');
-	images.push('assets/circle_icon.png');
-	images.push('assets/logo.png');
-
-	var job = function(){
-		window.requestAnimationFrame(function(){
-			loadImage(images[currentImage],0.8);
-
-			currentImage++;
-			if(currentImage>=images.length){
-				currentImage = 0;
-			}
-
-			setTimeout(job,3000);
-		});
+	dirigent = {
+		x: 0,
+		y: 0
 	}
 
-	job();
+	dirigentRelative = {
+		value: -1
+	}
 
-	
-   	startCreating();
+	colors = [];
+	colors.push('#71d6ad');
+	colors.push('#66c19c');
+	colors.push('#5eb390');
+	colors.push('#57a686');
+	colors.push('#4e9477');
+	colors.push('#47866c');
+	colors.push('#3e755e');
+	colors.push('#356451');
+	colors.push('#2b5242');
+	colors.push('#1f3a2f');
+	colors.push('#FFFFFF');
+
+	positions = 34;
+	particles = colors.length;
+
+	setupEnv();
+	render();
+
+	leftToRight();
 }
 
-function loadImage(path, scale){
-	imgCanvas = document.createElement('canvas');
-	imgContext = imgCanvas.getContext('2d');	
+function leftToRight(){
+	dirigentRelative = {value:dirigentRelative.value};
 
-	var image = new Image();
-	image.onload = function(){
-		imgCanvas.width = this.width*scale;
-   		imgCanvas.height = this.height*scale;
-   		imgContext.drawImage(image,0,0, image.width, image.height, 0,0,imgCanvas.width, imgCanvas.height);   		
+	var rand = Math.random();
+	var distance = Math.abs(dirigentRelative.value-rand);
+	if(distance<0.4){
+		distance = 0.4;
+	}
+
+	$(dirigentRelative).animate(
+		{
+			value: rand
+		},
+		{
+			duration: 1000*distance,
+			easing: 'easeInOutBack',
+			complete: function(){
+				rightToLeft();
+			}
+		});
+}
+
+function rightToLeft(){
+	dirigentRelative = {value:dirigentRelative.value};
+
+	var rand = Math.random();
+	var distance = Math.abs(dirigentRelative.value-rand);
+	if(distance<0.4){
+		distance = 0.4;
+	}
+
+	$(dirigentRelative).animate(
+		{
+			value: rand*-1
+		},
+		{
+			duration: 1000*distance,
+			easing: 'easeInOutBack',
+			complete: function(){
+				leftToRight();
+			}
+		});
+}
+
+function setupEnv() {
+	for (var pos = 0; pos<positions; pos++) {
+		for (var par = 0; par<particles; par++) {
+			var particle = new Particle({
+				index: par,
+				position: pos,
+
+				x: 0,
+				y: 0,
+
+				tracker: {x:0,y:0},
+
+				color: colors[par],
+				opacity: 0.7,
+
+				radius: 2 + par*0.25
+			});
+
+			objects.push(particle);
+		}
 	};
-	image.src = path + '?' + String(Math.random());
 }
 
 function render() {
@@ -83,100 +142,53 @@ function updateCanvas(){
 		_CANVAS.height = window.innerHeight;
 }
 
-function startCreating() {
-	var job = function(){
-		window.requestAnimationFrame(function(){
-			createPixels();
-
-			setTimeout(job, 35);
-		});
-	}
-
-	job();
-}
-
-function createPixels() {
-	if(imgContext){
-		for (var i = 45; i >= 0; i--) {
-			var x = Math.floor(Math.random()*imgCanvas.width);
-		    var y = Math.floor(Math.random()*imgCanvas.height);
-			
-			var randomPixel = imgContext.getImageData(x, y, 1, 1).data;
-
-			var red = randomPixel[0];
-			var green = randomPixel[1];
-			var blue = randomPixel[2];
-
-			if(red || green || blue){
-				var pixel = {
-					x: ((window.innerWidth/2) - (imgCanvas.width/2)) + x,
-					y: ((window.innerHeight/2) - (imgCanvas.height/2)) + y + 20,
-					radius: 0,
-					opacity: 1,
-					speed: 0.5,
-					color: {
-						red: red,
-						green: green,
-						blue: blue
-					}
-				}
-
-				objects.push(pixel);
-
-				
-			}
-		};
-	}
-}
 
 function updateObjects(){
+	var width = window.innerWidth;
+	var height = window.innerHeight;
+	var padding = 20;
+
+	var lineWidth = positions*padding;
+	var lineX = (width/2) - (lineWidth/2);
+	var lineY = height/2;
+
+
 	for (var i = objects.length - 1; i >= 0; i--) {
-		var pixel = objects[i];
+		var particle = objects[i];
 
-		pixel.radius+=1;
-		pixel.y -= pixel.speed;
-
-		pixel.speed += 0.2;
-
-		if(pixel.radius>10){
-			if(pixel.opacity>0.1){
-				pixel.opacity -=0.1;
-			} else {
-				if(pixel.opacity<=0.1){
-					var index = objects.indexOf(pixel);
-					objects.splice(index,1);
-				}
-			}
+		particle.tracker = {
+			x: lineX + (particle.position * padding),
+			y: lineY
 		}
+
+		particle.move(particle.tracker);
+		particle.follow(dirigent);
 	};
+
+	if(dirigent){
+		dirigent.x = lineX + (lineWidth/2) + ((lineWidth/2)*dirigentRelative.value);
+		dirigent.y = window.innerHeight/2 - 50;
+	}
 }
 
 function drawObjects(){
-	//_CONTEXT.shadowBlur = 0;
-	_CONTEXT.globalAlpha = 0.5;
-	_CONTEXT.fillStyle = '#1C1C1C';
-	_CONTEXT.fillRect(0,0,window.innerWidth,window.innerHeight);
-	//_CONTEXT.clearRect(0,0,window.innerWidth,window.innerHeight);
-	_CONTEXT.globalAlpha = 1;
+	_CONTEXT.clearRect(0,0,window.innerWidth,window.innerHeight);
 
-   	//_CONTEXT.shadowBlur = 50;
-
-	for (var i = objects.length - 1; i >= 0; i--) {
-		var pixel = objects[i];
-		var color = pixel.color;
-
-		//_CONTEXT.fillRect(x, y, 10, 10 );
+	for (var i = 0; i < objects.length; i++) {
+		var particle = objects[i];
 		
 		_CONTEXT.beginPath();
-		_CONTEXT.fillStyle = 'rgba('+color.red+','+color.green+','+color.blue+', 255)';
-		_CONTEXT.shadowColor = 'rgba('+color.red+','+color.green+','+color.blue+', 255)';
-		
-		_CONTEXT.globalAlpha = 0.2;
-		_CONTEXT.fillRect(pixel.x - pixel.radius,pixel.y - pixel.radius,pixel.radius*2,pixel.radius*2);
-
-		_CONTEXT.globalAlpha = pixel.opacity;
-		_CONTEXT.arc(pixel.x, pixel.y, pixel.radius, 0, 2 * Math.PI, false);	
-		
+		_CONTEXT.globalAlpha = particle.opacity;
+		_CONTEXT.fillStyle = particle.color;
+		_CONTEXT.arc(particle.x, particle.y, particle.radius, 0, 2 * Math.PI, false);	
 		_CONTEXT.fill();
 	};
+
+	if(dirigent){
+		_CONTEXT.beginPath();
+		_CONTEXT.globalAlpha = 1;
+		_CONTEXT.fillStyle = '#FFFFFF';
+		_CONTEXT.arc(dirigent.x, dirigent.y, 10, 0, 2 * Math.PI, false);	
+		_CONTEXT.fill();
+	}
 }
