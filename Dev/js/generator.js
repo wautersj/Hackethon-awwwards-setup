@@ -5,6 +5,7 @@
     this.range = map.range;
     this.seed = map.seed;
     this.loops = map.loops;
+    this.smoothLoops = map.smoothLoops;
     
   };
   
@@ -13,6 +14,9 @@
     var data = this.NewSeed();
     for(var i = 0; i < this.loops; i++){
       data = this.Split(data);
+    }
+    for(var i = 0; i < this.smoothLoops; i++){
+      data = this.smooth(data);
     }
     return data;
     
@@ -27,104 +31,177 @@
         data[i][j] = Math.floor(Math.random() * this.range);
       }
     }
+    
     return data;
   
   });
   
   Generator.prototype.Split = (function(data){
     
-    data = this.SplitHorizontal(data);
-    data = this.SplitVertical(data);
-    data = this.SplitCentral(data);
+    data = this.Horizontal(data);
+    data = this.Vertical(data);
     return data;
     
   });
     
-  Generator.prototype.SplitHorizontal = (function(oldData){
+  Generator.prototype.NewTile = (function(a, b){
+
+    var low = (a <= b)? a : b; 
+    var high = (a >= b)? a : b; 
+    var range = (high-low < this.range)? (high-low)+1 : this.range;
+    var tile = Math.floor(Math.random() * range)+low;
+    return (tile >= 0)? tile : 0;
+    
+  });
+    
+  Generator.prototype.Horizontal = (function(old){
       
-    var newData = [];
-    for (var i in oldData) {
-      newData[i] = [];
-      for (var j in oldData[i]) {
-        // Push old value
-        newData[i].push(oldData[i][j]);
-        // Push new value
-        var first = oldData[i][j];
-        var last = (oldData[i][(parseInt(j)+1)] == undefined)? Math.floor(Math.random() * this.range) : oldData[i][(parseInt(j)+1)] ;
-        newData[i].push(this.NewTile(first, last));
-        //newData[i].push(this.NewCentrTile(oldData, i, j));
+    var data = [];
+    for (var i = 0; i < old.length; i++) {
+      data[i] = []; 
+      for (var j = 0; j < old[i].length; j++) {
+        data[i].push(old[i][j]);
+        data[i].push(this.addHorizontal(old, i, j));
       }
     }
-    return newData; 
+    return data; 
   
   });
+  
+  Generator.prototype.addHorizontal = (function(range, i, j){
     
-  Generator.prototype.SplitVertical = (function(oldData){
+    var horizontal = 0;
+    if(range[i][j-1] != undefined && range[i][j+1] != undefined){
+      horizontal = parseInt((range[i][j-1]+range[i][j+1])/2);
+    } else if (range[i][j-1] != undefined) {
+      horizontal = range[i][j-1];
+    } else {
+      horizontal = range[i][j+1];
+    }
     
-    var newData = [];
-    for (var i in oldData) {
-      newData[(i*2)] = oldData[i];
-      newData[((i*2)+1)] = [];
-      var odd = true;
-      for(var j = 0; j < oldData[i].length; j++){
-        if (odd == true){
-          var first = (oldData[(parseInt(i)-1)] == undefined)? Math.floor(Math.random() * this.range) : oldData[(parseInt(i)-1)][j] ;
-          var last = (oldData[(parseInt(i)+1)] == undefined)? Math.floor(Math.random() * this.range) : oldData[(parseInt(i)+1)][j] ;
-          newData[((i*2)+1)].push(this.NewTile(first, last));
-          odd = false;
-        } else {
-          newData[((i*2)+1)].push(0);
-          odd = true;
-        }
+    var vertical = 0;
+    if(range[i-1] != undefined && range[i+1] != undefined){
+      vertical = parseInt((range[i-1][j]+range[i+1][j])/2);
+    } else if (range[i-1] != undefined) {
+      vertical = range[i-1][j];
+    } else {
+      vertical = range[i+1][j];
+    }
+    
+    return this.NewTile(horizontal, vertical);
+    
+  });
+    
+  Generator.prototype.Vertical = (function(old){
+    
+    var data = [];
+    for (var i = 0; i < old.length; i++) {
+      data[i*2] = old[i];
+      data[(i*2)+1] = [];
+      for (var j = 0; j < old[i].length; j++) {
+        data[(i*2)+1].push(this.addVertical(old, i, j));
+      }
+    }  
+    return data;
+    
+  });
+  
+  Generator.prototype.addVertical = (function(data, i, j){
+    
+    var tiles = [];
+    if(data[i] != undefined){
+      if(data[i][j-1] != undefined) {
+        tiles.push(data[i][j-1]); 
+      }
+      if(data[i][j+1] != undefined) {
+        tiles.push(data[i][j+1]); 
       }
     }
-    return newData; 
+    if(data[i+1] != undefined){
+      if(data[i+1][j-1] != undefined) {
+        tiles.push(data[i+1][j-1]); 
+      }
+      if(data[i+1][j+1] != undefined) {
+        tiles.push(data[i+1][j+1]); 
+      }
+    }
+    
+    var horizontal = this.parseVertical(tiles);
+    
+    var vertical = 0;
+    if(data[i-1] != undefined && data[i+1] != undefined){
+      vertical = parseInt((data[i-1][j]+data[i+1][j])/2);
+    } else if (data[i-1] != undefined) {
+      vertical = data[i-1][j];
+    } else {
+      vertical = data[i+1][j];
+    }
+    
+    return this.NewTile(horizontal, vertical);
+    
+  });
+  
+  Generator.prototype.parseVertical = (function(tiles){
+  
+    if(tiles.length == 1){
+      return parseInt(tiles[0]);
+    } else if(tiles.length == 2){
+      return parseInt((tiles[0]+tiles[1])/2);
+    } else if(tiles.length == 4){
+      return parseInt((tiles[0] + tiles[1]+tiles[2] + tiles[3])/2);
+    }
+  
+    return 0;
   
   });
+  
+  Generator.prototype.smooth = (function(old){
     
-  Generator.prototype.SplitCentral = (function(oldData){
-    
-    var newData = [];
-    var odd = false;
-    for(var i in oldData){
-      if (odd == true){
-        odd = false
-        for(var j in oldData[i]){
-          if (odd == true){
-            odd = false;
-            oldData[i][j] = this.NewCentrTile(oldData, i, j);
-          } else {
-            odd = true;
-          }
-        }
-        odd = false;
-      } else {
-        odd = true
-      }
+    var data = [];
+    for (var i = 0; i < old.length; i++) {
+      data[i] = []; 
+      for (var j = 0; j < old[i].length; j++) data[i][j] = this.smoothX(old, i, j);
     }
-    return oldData; 
+    
+    for (var i = 0; i < data.length; i++) {
+      for (var j = 0; j < data[i].length; j++) data[i][j] = this.smoothO(data, i, j);
+    }
+    
+    return data;
+  });
+  
+  Generator.prototype.smoothX = (function(data, i, j){
+    
+    var tiles = [];
+    var tile = 0;
+    
+    if(data[i-1] != undefined){
+      if(data[i-1][j-1] != undefined) tiles.push(data[i-1][j-1]);
+      if(data[i-1][j+1] != undefined) tiles.push(data[i-1][j+1]);
+    }
+    tiles.push(data[i][j]);
+    if(data[i+1] != undefined){
+      if(data[i+1][j-1] != undefined) tiles.push(data[i+1][j-1]);
+      if(data[i+1][j+1] != undefined) tiles.push(data[i+1][j+1]);
+    }
+    
+    for(var i in tiles) tile += parseInt(tiles[i]);
+    return parseInt(tile/tiles.length);
     
   });
+  
+  Generator.prototype.smoothO = (function(data, i, j){
     
-  Generator.prototype.NewTile = (function(first, last){
+    var tiles = [];
+    var tile = 0;
+
+    if(data[i-1] != undefined) tiles.push(data[i-1][j]);
+    if(data[i][j-1] != undefined) tiles.push(data[i][j-1]);
+    if(data[i][j+1] != undefined) tiles.push(data[i][j+1]);
+    if(data[i+1] != undefined) tiles.push(data[i+1][j]);
     
-    var low = (first <= last)? first : last; 
-    var high = (first >= last)? first : last; 
-    return Math.floor(Math.random() * (high-low+1))+low-1;
-    
-  });
-    
-  Generator.prototype.NewCentrTile = (function(data, i, j){
-    
-    //var left = (data[i][(parseInt(j)-1)] == undefined)? Math.floor(Math.random() * this.range) : data[i][(parseInt(j)-1)] ;
-    //var right = (data[i][(parseInt(j)+1)] == undefined)? Math.floor(Math.random() * this.range) : data[i][(parseInt(j)+1)] ;
-    var top = (data[(parseInt(i)-1)] == undefined)? Math.floor(Math.random() * this.range) : data[(parseInt(i)-1)][j] ;
-    var bottom = (data[(parseInt(i)+1)] == undefined)? Math.floor(Math.random() * this.range) : data[(parseInt(i)+1)][j] ;
-    
-    //var first = Math.floor((left+right)/2);
-    //var last = Math.floor((top+bottom)/2);
-    
-    return this.NewTile(top, bottom);
+    for(var i in tiles) tile += parseInt(tiles[i]);
+    return parseInt(tile/tiles.length);
     
   });
   
