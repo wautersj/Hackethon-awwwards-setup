@@ -12,12 +12,8 @@
   Generator.prototype.New = (function(){
     
     var data = this.NewSeed();
-    for(var i = 0; i < this.loops; i++){
-      data = this.Split(data);
-    }
-    for(var i = 0; i < this.smoothLoops; i++){
-      data = this.smooth(data);
-    }
+    for(var i = 0; i < this.loops; i++) data = this.Split(data);
+    for(var i = 0; i < this.smoothLoops; i++) data = this.smooth(data);
     return data;
     
   });

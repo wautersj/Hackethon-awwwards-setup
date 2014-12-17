@@ -6,8 +6,9 @@
     this.map = map;
   }
   
-  MapDrawer.prototype.draw = (function(data){
+  MapDrawer.prototype.draw = (function(data, shift){
     
+    var shift = shift || 0;
     var hexHeight,
         hexRadius,
         hexRectangleHeight,
@@ -41,6 +42,10 @@
         );
       }
     }
+    
+    function tweak(range){
+      return ((range - shift) >= 0)? (range - shift) : 0;
+    }
   
     function drawHexagon(context, x, y, range) {   
       
@@ -70,8 +75,8 @@
         "#C4C4C4"
       ];
     
-      context.fillStyle = color[range];
-      context.strokeStyle = color[range];
+      context.fillStyle = color[tweak(range)];
+      context.strokeStyle = color[tweak(range)];
       context.beginPath();
       context.moveTo(x + hexRadius, y);
       context.lineTo(x + hexRectangleWidth, y + hexHeight);

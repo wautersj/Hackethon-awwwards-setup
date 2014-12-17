@@ -11,24 +11,15 @@
       "context" : document.getElementById("myCanvas").getContext('2d')
     };
     
-    // Grid
-    this.grid = {
-      "width" : 25,
-      "height" : 25
-    }
-    
     // Map 
     this.map = {
       "seed" : {
         "width": 12,
-        "height": 20
+        "height": 18
       },
       "range" : 10,
-      "opacity" : 0.05,
-      "sealevel" : 2,
-      "loops" : 4,
-      "smoothLoops" : 1,
-      "color" : true
+      "loops" : 3,
+      "smoothLoops" : 1
     }
     
   };
@@ -42,7 +33,23 @@
     this.data = this.generator.New();
     
     // Draw map data on canvas
-    this.mapDrawer.draw(this.data);
+    //this.mapDrawer.draw(this.data);
+    
+    this.Play();
+    
+    
+  });
+  
+  Instance.prototype.Play = (function(){
+    
+    var self = this;
+    self.shift = 20;
+    
+    self.loop = setInterval(function(){
+      self.mapDrawer.draw(self.data, self.shift);
+      self.shift = self.shift-1;
+      if(self.shift < 0) clearInterval(self.loop);
+    }, 10);
     
   });
   
