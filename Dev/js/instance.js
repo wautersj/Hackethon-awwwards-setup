@@ -13,8 +13,8 @@
     
     // Grid
     this.grid = {
-      "width" : 5,
-      "height" : 5
+      "width" : 25,
+      "height" : 25
     }
     
     // Map 
@@ -27,7 +27,7 @@
       "opacity" : 0.05,
       "sealevel" : 2,
       "loops" : 4,
-      "smoothLoops" : 2,
+      "smoothLoops" : 1,
       "color" : true
     }
     
@@ -49,7 +49,8 @@
     
     //this.generator = new Generator(this.mapOld);
     this.generator = new GeneratorTwo(this.map);
-    this.mapDrawer = new MapDrawer(this.canvas, this.grid, this.map);
+    //this.mapDrawer = new MapDrawer(this.canvas, this.grid, this.map);
+    this.mapDrawer = new MapDrawerTwo(this.canvas, this.grid, this.map);
     
     // Generate map data
     this.data = this.generator.New();
