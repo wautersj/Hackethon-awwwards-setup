@@ -52,6 +52,9 @@
       x = x-20;
       y = y-20;
       
+      if(x >= window.innerWidth*window.devicePixelRatio) return false;
+      if(y >= window.innerHeight*window.devicePixelRatio) return false;
+      
       var color = [
         "#303056",
         "#303056",

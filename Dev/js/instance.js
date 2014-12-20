@@ -26,12 +26,19 @@
   
   Instance.prototype.Init = (function (){
     
+    this.canvas.dom.style.background = "#303056";
+    
     this.generator = new Generator(this.map);
     this.mapDrawer = new MapDrawer(this.canvas, this.grid, this.map);
+    this.shift = 0;
     
     // Generate map data
     this.data = this.generator.New();
     
+    var self= this;
+    window.onresize = function(event) {
+      self.mapDrawer.draw(self.data, self.shift);
+    }
     // Draw map data on canvas
     //this.mapDrawer.draw(this.data);
     
@@ -48,8 +55,11 @@
     self.loop = setInterval(function(){
       self.mapDrawer.draw(self.data, self.shift);
       self.shift = self.shift-1;
-      if(self.shift < 0) clearInterval(self.loop);
-    }, 10);
+      if(self.shift < 0){
+        self.shift = 0;
+        clearInterval(self.loop);
+      }
+    }, 50);
     
   });
   
