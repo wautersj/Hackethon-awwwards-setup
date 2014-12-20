@@ -39,11 +39,8 @@
     window.onresize = function(event) {
       self.mapDrawer.draw(self.data, self.shift);
     }
-    // Draw map data on canvas
-    //this.mapDrawer.draw(this.data);
     
-    this.Play();
-    
+    this.Play(); 
     
   });
   
@@ -52,6 +49,8 @@
     var self = this;
     self.shift = 20;
     
+    self.mapDrawer.draw(self.data, self.shift);
+      
     self.loop = setInterval(function(){
       self.mapDrawer.draw(self.data, self.shift);
       self.shift = self.shift-1;
