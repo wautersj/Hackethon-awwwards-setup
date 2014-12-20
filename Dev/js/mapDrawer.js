@@ -55,28 +55,7 @@
       if(x >= window.innerWidth*window.devicePixelRatio) return false;
       if(y >= window.innerHeight*window.devicePixelRatio) return false;
       
-      var color = [
-        "#303056",
-        "#303056",
-        "#303056",
-        "#303056",
-        "#3D3D69",
-        "#5B66A7",
-        "#7784CF",
-        "#CBB361",
-        "#81BA84",
-        "#49A34d",
-        "#469A47",
-        "#408d3E",
-        "#346E29",
-        "#346E29",
-        "#6B5629",
-        "#6B5629",
-        "#564D39",
-        "#4D4D48",
-        "#7E7F82",
-        "#C4C4C4"
-      ];
+      var color = [ "#14142b","#21213d","#2b2b4a","#303056","#3D3D69","#5B66A7","#7784CF","#CBB361","#81BA84","#49A34d","#469A47","#408d3E","#346E29","#346E29","#6B5629","#6B5629","#564D39","#4D4D48","#7E7F82","#C4C4C4" ];
     
       context.fillStyle = color[tweak(range)];
       context.strokeStyle = color[tweak(range)];
