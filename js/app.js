@@ -8,6 +8,7 @@ var trailCan;
 var trailCtx;
 var imgContainerCan;
 var imgContainerCtx;
+var iterationsWithAllBikesCrashed = 0;
 
 var _FPS;
 var _OBJECTS;
@@ -95,7 +96,7 @@ function gameStart(){
 }
 
 function render() {
-  setTimeout(function(){
+  // setTimeout(function(){
     window.requestAnimationFrame(function(){
       updateCanvas();
       updateObjects();
@@ -103,7 +104,7 @@ function render() {
       drawObjects();
       render();
     });
-  }, 1000/_FPS);
+  // }, 1000/_FPS);
 }
 
 function updateCanvas() {
@@ -130,16 +131,21 @@ function updateObjects() {
   };
 
   if (allBikesCrashed) {
-    _OBJECTS = [];
-    bikeOne = new Bike(53, 44, 0, 5, 5,'#FFFFFF');
-    bikeTwo = new Bike(borders[1] - 35, borders[0] + 27, 90, 5, 5,'#19a497');
-    bikeThree = new Bike(borders[1] - 35, borders[2] - 27, 180, 5, 5,'#24e0c9');
-    bikeFour = new Bike(borders[3] + 35, borders[2] - 27, 270, 5, 5,'#105b50');
+    iterationsWithAllBikesCrashed += 1;
+    if (iterationsWithAllBikesCrashed > 50) {
+      iterationsWithAllBikesCrashed = 0;
+      particles = [];
+      _OBJECTS = [];
+      bikeOne = new Bike(53, 44, 0, 5, 5,'#FFFFFF');
+      bikeTwo = new Bike(borders[1] - 35, borders[0] + 27, 90, 5, 5,'#19a497');
+      bikeThree = new Bike(borders[1] - 35, borders[2] - 27, 180, 5, 5,'#24e0c9');
+      bikeFour = new Bike(borders[3] + 35, borders[2] - 27, 270, 5, 5,'#105b50');
 
-    _OBJECTS.push(bikeOne);
-    _OBJECTS.push(bikeTwo);
-    _OBJECTS.push(bikeThree);
-    _OBJECTS.push(bikeFour);
+      _OBJECTS.push(bikeOne);
+      _OBJECTS.push(bikeTwo);
+      _OBJECTS.push(bikeThree);
+      _OBJECTS.push(bikeFour);
+    }
   }
 }
 
@@ -208,8 +214,21 @@ function drawObjects() {
     	imgContainerCtx.rotate(bike.rotation*(Math.PI/180));
     	imgContainerCtx.drawImage(bikeCan, -(bikeCan.width/2), -(bikeCan.height/2));
     	imgContainerCtx.restore();
+    } else if (bike.crashed == true && bike.still_need_explosion == true){
+      createExplosion(bike.x, bike.y, bike.color);
+      bike.still_need_explosion = false;
     };
   };
+
+
+  // Animate explosion particles
+  for (var i=0; i<particles.length; i++)
+  {
+    var particle = particles[i];
+
+    particle.update("20");
+    particle.draw(imgContainerCtx);
+  }
 
 }
 

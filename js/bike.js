@@ -17,6 +17,7 @@ var Bike = function (x, y, direction, speed, radius, color) {
   this.location_trail = []
   this.location_trail.unshift(location);
   this.crashed = false;
+  this.still_need_explosion = true;
 };
 
 Bike.prototype.move = function(bikes) {
