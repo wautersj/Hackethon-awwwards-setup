@@ -16,6 +16,7 @@ var Bike = function (x, y, direction, speed, radius, color) {
   }
   this.location_trail = []
   this.location_trail.unshift(location);
+  this.crashed = false;
 };
 
 Bike.prototype.move = function(bikes) {
@@ -44,6 +45,8 @@ Bike.prototype.move = function(bikes) {
       //use available directions to get direction
       if (available_directions.length == 0){
         bike.speed = 0;
+        bike.crashed = true;
+        bike.location_trail = []
       } else{
         bike.direction = available_directions[Math.floor(Math.random()*available_directions.length)];
       }

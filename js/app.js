@@ -121,6 +121,26 @@ function updateObjects() {
     bike.move(_OBJECTS);
   }
   //console.log(6);
+
+  var allBikesCrashed = true;
+  for (var i = _OBJECTS.length - 1; i >= 0; i--) {
+    if (_OBJECTS[i].crashed == false) {
+      allBikesCrashed = false;
+    }
+  };
+
+  if (allBikesCrashed) {
+    _OBJECTS = [];
+    bikeOne = new Bike(53, 44, 0, 5, 5,'#FFFFFF');
+    bikeTwo = new Bike(borders[1] - 35, borders[0] + 27, 90, 5, 5,'#19a497');
+    bikeThree = new Bike(borders[1] - 35, borders[2] - 27, 180, 5, 5,'#24e0c9');
+    bikeFour = new Bike(borders[3] + 35, borders[2] - 27, 270, 5, 5,'#105b50');
+
+    _OBJECTS.push(bikeOne);
+    _OBJECTS.push(bikeTwo);
+    _OBJECTS.push(bikeThree);
+    _OBJECTS.push(bikeFour);
+  }
 }
 
 function drawObjects() {
@@ -131,7 +151,7 @@ function drawObjects() {
 
   _CONTEXT.globalAlpha = 0.075;
   _CONTEXT.fillStyle = '#000000';
-  //_CONTEXT.fillRect(0,0,window.innerWidth,window.innerHeight);
+  _CONTEXT.fillRect(0,0,window.innerWidth,window.innerHeight);
   _CONTEXT.globalAlpha = 1;
 
   // _CONTEXT.fillStyle = '#000000';
@@ -140,6 +160,7 @@ function drawObjects() {
   for (var i = _OBJECTS.length - 1; i >= 0; i--) {
     var bike = _OBJECTS[i];
 
+    if (bike.crashed == false) {
     _CONTEXT.fillStyle = bike.color;
     _CONTEXT.shadowColor = bike.color;
     _CONTEXT.shadowBlur = 20;
@@ -149,7 +170,7 @@ function drawObjects() {
     _CONTEXT.closePath();
     _CONTEXT.fill();
 
-    // //drawing rotated trail
+    // rawing rotated trail
     // _CONTEXT.save();
     // _CONTEXT.translate(bike.x, bike.y);
     // _CONTEXT.rotate(bike.rotation*(Math.PI/180));
@@ -159,34 +180,35 @@ function drawObjects() {
     _CONTEXT.shadowColor = '#000000';
     _CONTEXT.shadowBlur = 0;
 
-    // for (var o = bike.location_trail.length - 1; o >= 0; o--) {
-    //   _CONTEXT.beginPath();
-    //   _CONTEXT.arc(bike.location_trail[o].x, bike.location_trail[o].y, bike.radius, 0, Math.PI*2);
-    //   _CONTEXT.closePath();
-    //   _CONTEXT.fill();
-    // };
 
-    // _CONTEXT.beginPath();
-    // _CONTEXT.arc(bike.next_x, bike.next_y, bike.radius, 0, Math.PI*2);
-    // _CONTEXT.closePath();
-    // _CONTEXT.fill();
+      for (var o = bike.location_trail.length - 1; o >= 0; o--) {
+        _CONTEXT.beginPath();
+        _CONTEXT.arc(bike.location_trail[o].x, bike.location_trail[o].y, 3, 0, Math.PI*2);
+        _CONTEXT.closePath();
+        _CONTEXT.fill();
+      };
+      // _CONTEXT.beginPath();
+      // _CONTEXT.arc(bike.next_x, bike.next_y, bike.radius, 0, Math.PI*2);
+      // _CONTEXT.closePath();
+      // _CONTEXT.fill();
 
-    imgContainerCtx.shadowColor = '#000000';
-    imgContainerCtx.shadowBlur = 0;
+      imgContainerCtx.shadowColor = '#000000';
+      imgContainerCtx.shadowBlur = 0;
 
-    imgContainerCtx.globalAlpha = 0.1;
-    imgContainerCtx.fillStyle = '#000000';
-    //_CONTEXT.fillRect(0,0,window.innerWidth,window.innerHeight);
-    imgContainerCtx.globalAlpha = 1;
-    //console.log(bikeCan.height)
+      imgContainerCtx.globalAlpha = 0.1;
+      imgContainerCtx.fillStyle = '#000000';
+      //_CONTEXT.fillRect(0,0,window.innerWidth,window.innerHeight);
+      imgContainerCtx.globalAlpha = 1;
+      //console.log(bikeCan.height)
 
-    //Drawing rotated bike.
-    imgContainerCtx.clearRect ( 0 , 0 , bikeCan.width, bikeCan.height );
-    imgContainerCtx.save();
-    imgContainerCtx.translate(bike.x, bike.y);
-  	imgContainerCtx.rotate(bike.rotation*(Math.PI/180));
-  	imgContainerCtx.drawImage(bikeCan, -(bikeCan.width/2), -(bikeCan.height/2));
-  	imgContainerCtx.restore();
+      //Drawing rotated bike.
+      imgContainerCtx.clearRect ( 0 , 0 , bikeCan.width, bikeCan.height );
+      imgContainerCtx.save();
+      imgContainerCtx.translate(bike.x, bike.y);
+    	imgContainerCtx.rotate(bike.rotation*(Math.PI/180));
+    	imgContainerCtx.drawImage(bikeCan, -(bikeCan.width/2), -(bikeCan.height/2));
+    	imgContainerCtx.restore();
+    };
   };
 
 }
