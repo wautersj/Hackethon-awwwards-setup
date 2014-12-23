@@ -6,7 +6,7 @@ var _CONTEXT;
 
 var rects;
 var rimples;
-var rimpleRadius = 70;
+var rimpleRadius = 40;
 var rimplesCount = 0;
 var easeOpacityOut = true;
 
@@ -25,7 +25,7 @@ function init() {
 	var job = function(){
 		window.requestAnimationFrame(function(){
 			createRimple();
-			setTimeout(job,1000);
+			setTimeout(job,1750);
 		});
 	}
 
@@ -113,8 +113,8 @@ function updateObjects(){
 
 	for (var i = rimples.length - 1; i >= 0; i--) {
 		var rimple = rimples[i];
-		rimple.value += 4 + rimple.value*0.01;
-		//rimple.radius += 2;
+		rimple.value += 2 + rimple.value*0.01;
+		rimple.radius += 1;
 
 		if(window.innerWidth>window.innerHeight){
 			if(rimple.value > (_CANVAS.width/2)+rimpleRadius){
