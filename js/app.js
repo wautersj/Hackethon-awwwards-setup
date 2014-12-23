@@ -8,6 +8,7 @@ var rects;
 var rimples;
 var rimpleRadius = 70;
 var rimplesCount = 0;
+var easeOpacityOut = true;
 
 function init() {
 	//Caching, initializing some objects.
@@ -21,12 +22,10 @@ function init() {
 	//Get asset data first.
 	render();
 
-	createPixels(1,1);
-
 	var job = function(){
 		window.requestAnimationFrame(function(){
 			createRimple();
-			setTimeout(job,1000)
+			setTimeout(job,1000);
 		});
 	}
 
@@ -68,12 +67,15 @@ function createRimple(){
 	var rimple = {
 		value:2,
 		radius:rimpleRadius,
-		color: '#FFFFFF'
+		color: '#19a497'
 	};
 
+	/*
 	if(rimplesCount%3){
-		rimple.color = '#19a497';
+		rimple.color = '#FFFFFF';
+		//rimple.color = '#19a497';
 	}
+	*/
 
 	rimples.push(rimple);
 	rimplesCount++;
@@ -94,8 +96,10 @@ function render() {
 }
 
 function updateCanvas(){
-	if(_CANVAS.width !== window.innerWidth)
+	if(_CANVAS.width !== window.innerWidth){
 		_CANVAS.width = window.innerWidth;
+		createPixels(1,1);
+	}
 
 	if(_CANVAS.height !== window.innerHeight)
 		_CANVAS.height = window.innerHeight;
@@ -109,12 +113,19 @@ function updateObjects(){
 
 	for (var i = rimples.length - 1; i >= 0; i--) {
 		var rimple = rimples[i];
-		rimple.value += 7;
+		rimple.value += 4 + rimple.value*0.01;
 		//rimple.radius += 2;
 
-		if(rimple.value > (_CANVAS.width/2)+rimpleRadius){
-			var index = rimples.indexOf(rimple);
-			rimples.splice(index,1);
+		if(window.innerWidth>window.innerHeight){
+			if(rimple.value > (_CANVAS.width/2)+rimpleRadius){
+				var index = rimples.indexOf(rimple);
+				rimples.splice(index,1);
+			}
+		} else {
+			if(rimple.value > (_CANVAS.height/2)+rimpleRadius){
+				var index = rimples.indexOf(rimple);
+				rimples.splice(index,1);
+			}
 		}
 	};
 
@@ -131,9 +142,17 @@ function updateObjects(){
 			if(distance>rimple.value && distance<(rimple.value+rimple.radius)){
 				var range = distance - rimple.value;
 
+				var easedOpacity = 1 - Math.abs(rimple.value/(window.innerWidth/2));
+				if(easedOpacity>1){easedOpacity=1};
+				if(easedOpacity<0){easedOpacity=0};
+
 				var relative = range / rimple.radius;
 				var relative2 = (relative*2)-1;
 				var relative3 = 1 - Math.abs(relative2);
+
+				if(easeOpacityOut){
+					relative3 *= easedOpacity;
+				}
 
 				pixel.inRange = true;
 				pixel.opacity = relative3 * pixel._opacity;
@@ -150,7 +169,7 @@ function updateObjects(){
 
 function drawObjects(){
 	//draw part 1 of dual effect screen;
-	_CONTEXT.globalAlpha = 0.3;
+	_CONTEXT.globalAlpha = 0.25;
 	_CONTEXT.fillStyle = '#1C1C1C';
     _CONTEXT.fillRect(0,0,window.innerWidth,window.innerHeight);
     _CONTEXT.globalAlpha = 1;
