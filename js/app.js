@@ -20,14 +20,26 @@ function init(){
     pixels = [];
     maxPixels = 400;
 
-    setupAssets(render);
+    var runloop = function(){
+    	window.requestAnimationFrame(function(){
+    		addPixels();
+
+    		setTimeout(runloop, 80);
+    	});
+    }
+
+
+    setupAssets(function(){
+    	render();
+    	runloop();
+    });
 }
 
 function setupAssets(callback) {
     
     type1 = {
         name: 'type 1 white',
-        url: 'assets/type-1-white.png',
+        url: 'http://client.digiti.be/awwwards_assets/tycho-pen/type-1-white.png',
         img: null,
 
         width: null,
@@ -36,7 +48,7 @@ function setupAssets(callback) {
 
     type2 = {
         name: 'type 2 white',
-        url: 'assets/type-1-green.png',
+        url: 'http://client.digiti.be/awwwards_assets/tycho-pen/type-1-green.png',
         img: null,
 
         width: null,
@@ -78,7 +90,7 @@ function addPixels(){
     if(pixels.length<maxPixels){
         for (var i = 0 ; i<3; i++) {
             var x = Math.floor(Math.random() * CANVAS.width);
-            var y = -10; // out of sight
+            var y = -20; // out of sight
 
             var pixel = {
                 x : x,
@@ -144,9 +156,16 @@ function simulate(){
         //cache pixel
         var currentPixel = pixels[i];
 
+        var targetY = (window.innerHeight * 1.5);
+        if(targetY<400){targetY=400}
+
         //move pixel
         currentPixel.x += ((currentPixel.x + currentPixel.offsetX) - currentPixel.x) / currentPixel.smoothness;
-        currentPixel.y += ((window.innerHeight * 1.5) - currentPixel.y) / currentPixel.smoothness;
+        currentPixel.y += (targetY - currentPixel.y) / currentPixel.smoothness;
+
+        currentPixel.opacity = 1-currentPixel.y/window.innerHeight;
+        if(currentPixel.opacity>1){currentPixel.opacity=1};
+        if(currentPixel.opacity<0){currentPixel.opacity=0};
 
         //pixels collision detection
         for(var j = 0; j < pixels.length ; j++) {
@@ -160,7 +179,8 @@ function simulate(){
         }
 
         //delete when out-of-window
-        if(currentPixel.y > window.innerHeight){
+        if(currentPixel.y > window.innerHeight ||
+        	currentPixel.opacity<0.01){
             var indexToRemove = pixels.indexOf(currentPixel);
             pixels.splice(indexToRemove, 1);
         }
@@ -185,6 +205,9 @@ function detectCollision(circle,anotherCircle){
 function scaleCanvas(){
     if(CANVAS.width !== window.innerWidth) {
         CANVAS.width = window.innerWidth;
+    }
+
+    if(CANVAS.height !== window.innerHeight) {
         CANVAS.height = window.innerHeight;
     }
 }
@@ -198,7 +221,7 @@ function render (){
         clearCanvas();
         scaleCanvas();
 
-        addPixels();
+        //addPixels();
         //clearPixels();
         
         draw();
