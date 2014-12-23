@@ -31,14 +31,14 @@ function init() {
 		},750);
 	}
 
-	task();
-
 	mX = 2;
 	mY = 2;
 
 	//setFocus();
 	//setInterval(setFocus,800);
 	createPixels(mX,mY);
+
+	task();
 }
 
 function setFocus(){
@@ -95,8 +95,9 @@ function createPixels(multiplyerX,multiplyerY) {
 				y: poy*tileHeight,
 				width: tileWidth,
 				height: tileHeight,
+				color: '#19a497',
 				opacity: 0,
-				_opacity: Math.random(),
+				_opacity: 1,
 				inRange: false
 			});
 		};	
@@ -109,9 +110,18 @@ function createDrop(x, speed){
 
 	var newDrop = {
 		x: x,
-		y: window.innerHeight+100,
-		speed: speed
+		y: window.innerHeight+200,
+		opacity: 0.5 + Math.random()*0.5,
+		//opacity: Math.random(),
+		speed: speed,
+		color: '#19a497'
 	}
+
+	/*
+	if(Math.random()>0.5){
+		newDrop.color = '#FFFFFF';
+	}
+	*/
 
 	drops.push(newDrop)
 }
@@ -120,7 +130,7 @@ function updateObjects(){
 	for (var i = drops.length - 1; i >= 0; i--) {
 		var drop = drops[i];
 
-		//drop.x += 20;
+		//drop.x += 2;
 		drop.y-=drop.speed;
 
 		if(drop.y<-100){
@@ -139,13 +149,15 @@ function updateObjects(){
 
 			var distance = lineDistance(drop,pixel);
 
-			var maxDistance = 160;
+			var maxDistance = 150;
 			if(distance<maxDistance){
+				pixel.inRange = true;
+				pixel.color = drop.color;
+				pixel._opacity = drop.opacity;
+
 				var relative = (maxDistance-distance)/maxDistance;
 				relative *= pixel._opacity;
 				pixel.opacity = relative;
-
-				pixel.inRange = true;
 			}
 		};
 
@@ -166,7 +178,7 @@ function drawObjects(){
 		var pixel = rects[i];
 
 		_CONTEXT.globalAlpha = pixel.opacity;
-		_CONTEXT.fillStyle = '#19a497';
+		_CONTEXT.fillStyle = pixel.color;
 		_CONTEXT.fillRect(pixel.x,pixel.y,pixel.width,pixel.height);
 	};
 }
