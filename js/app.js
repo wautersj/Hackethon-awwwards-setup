@@ -27,9 +27,11 @@ function getImageData() {
 	var currentImage = 0;
 
 	var images = [];
-	images.push('assets/heart.png');
+	//images.push('http://client.digiti.be/awwwards_assets/joeri-pen/heart.png');
+	//images.push('http://client.digiti.be/awwwards_assets/joeri-pen/logo.png');
+	
 	images.push('assets/circle_icon.png');
-	images.push('assets/logo.png');
+	images.push('assets/hackethon.jpg');
 
 	var job = function(){
 		window.requestAnimationFrame(function(){
@@ -40,7 +42,7 @@ function getImageData() {
 				currentImage = 0;
 			}
 
-			setTimeout(job,3000);
+			setTimeout(job,4000);
 		});
 	}
 
@@ -88,7 +90,7 @@ function startCreating() {
 		window.requestAnimationFrame(function(){
 			createPixels();
 
-			setTimeout(job, 35);
+			setTimeout(job, 25);
 		});
 	}
 
@@ -97,7 +99,7 @@ function startCreating() {
 
 function createPixels() {
 	if(imgContext){
-		for (var i = 45; i >= 0; i--) {
+		for (var i = 40; i >= 0; i--) {
 			var x = Math.floor(Math.random()*imgCanvas.width);
 		    var y = Math.floor(Math.random()*imgCanvas.height);
 			
@@ -136,7 +138,7 @@ function updateObjects(){
 		pixel.radius+=1;
 		pixel.y -= pixel.speed;
 
-		pixel.speed += 0.2;
+		pixel.speed += 0.15;
 
 		if(pixel.radius>10){
 			if(pixel.opacity>0.1){
@@ -153,7 +155,7 @@ function updateObjects(){
 
 function drawObjects(){
 	//_CONTEXT.shadowBlur = 0;
-	_CONTEXT.globalAlpha = 0.5;
+	_CONTEXT.globalAlpha = 0.7;
 	_CONTEXT.fillStyle = '#1C1C1C';
 	_CONTEXT.fillRect(0,0,window.innerWidth,window.innerHeight);
 	//_CONTEXT.clearRect(0,0,window.innerWidth,window.innerHeight);
@@ -171,7 +173,7 @@ function drawObjects(){
 		_CONTEXT.fillStyle = 'rgba('+color.red+','+color.green+','+color.blue+', 255)';
 		_CONTEXT.shadowColor = 'rgba('+color.red+','+color.green+','+color.blue+', 255)';
 		
-		_CONTEXT.globalAlpha = 0.2;
+		_CONTEXT.globalAlpha = 0;
 		_CONTEXT.fillRect(pixel.x - pixel.radius,pixel.y - pixel.radius,pixel.radius*2,pixel.radius*2);
 
 		_CONTEXT.globalAlpha = pixel.opacity;
