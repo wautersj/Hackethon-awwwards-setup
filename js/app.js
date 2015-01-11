@@ -2,10 +2,14 @@ $(document).ready(init);
 
 var _CANVAS;
 var _CONTEXT;
-var bikeCan;
-var bikeCtx;
-var trailCan;
-var trailCtx;
+var bikeOneCan;
+var bikeOneCtx;
+var bikeTwoCan;
+var bikeTwoCtx;
+var bikeThreeCan;
+var bikeThreeCtx;
+var bikeFourCan;
+var bikeFourCtx;
 var imgContainerCan;
 var imgContainerCtx;
 var iterationsWithAllBikesCrashed = 0;
@@ -15,8 +19,7 @@ var _OBJECTS;
 var bikeOne;
 var bikeTwo
 
-var bikeImg;
-var trailImg;
+var bikeCanvases = [];
 
 function init() {
   _FPS = 90;
@@ -28,70 +31,99 @@ function init() {
   imgContainerCan = document.getElementById("imgCanvas");
   imgContainerCtx = imgContainerCan.getContext("2d");
 
-  bikeCan = document.createElement("canvas");
-  bikeCtx = bikeCan.getContext("2d");
+  // Bike One
 
-  trailCan = document.createElement("canvas");
-  trailCtx = trailCan.getContext("2d");
+  bikeOneCan = document.createElement("canvas");
+  bikeOneCtx = bikeOneCan.getContext("2d");
 
-  bikeImg = new Image();
-  bikeImg.onload = function() {
-    bikeCan.width = this.width*0.2;
-    bikeCan.height = this.height*0.2;
-    bikeCtx.drawImage(this,0,0, this.width, this.height, 0, 0, bikeCan.width, bikeCan.height);
+  var DOMURL = window.URL || window.webkitURL || window;
 
+  var dataOne = document.getElementById('lightBikeOne').innerHTML;
+  var svgOne = new Blob([dataOne], {type: 'image/svg+xml;charset=utf-8'});
+  var urlOne = DOMURL.createObjectURL(svgOne);
+
+  bikeOneImg = new Image();
+  bikeOneImg.onload = function() {
+    bikeOneCan.width = this.width*0.2;
+    bikeOneCan.height = this.height*0.2;
+    bikeOneCtx.drawImage(this,0,0, this.width, this.height, 0, 0, bikeOneCan.width, bikeOneCan.height);
+    bikeCanvases.push(bikeOneCan)
   };
 
-  bikeImg.src = "img/lightBike.svg";
+  bikeOneImg.src = urlOne;
 
-  trailImg = new Image();
-  trailImg.onload = function() {
-    trailCan.width = this.width*0.1;
-    trailCan.height = this.height*0.1;
-    trailCtx.drawImage(this,0,0, this.width, this.height, 0, 0, trailCan.width, trailCan.height);
+  // Bike Two
 
+  bikeTwoCan = document.createElement("canvas");
+  bikeTwoCtx = bikeTwoCan.getContext("2d");
+
+  var dataTwo = document.getElementById('lightBikeTwo').innerHTML;
+  var svgTwo = new Blob([dataTwo], {type: 'image/svg+xml;charset=utf-8'});
+  var urlTwo = DOMURL.createObjectURL(svgTwo);
+
+  bikeTwoImg = new Image();
+  bikeTwoImg.onload = function() {
+    bikeTwoCan.width = this.width*0.2;
+    bikeTwoCan.height = this.height*0.2;
+    bikeTwoCtx.drawImage(this,0,0, this.width, this.height, 0, 0, bikeTwoCan.width, bikeTwoCan.height);
+    bikeCanvases.push(bikeTwoCan)
+  };
+
+  bikeTwoImg.src = urlTwo;
+
+  // Bike Three
+
+  bikeThreeCan = document.createElement("canvas");
+  bikeThreeCtx = bikeThreeCan.getContext("2d");
+
+  var dataThree = document.getElementById('lightBikeThree').innerHTML;
+  var svgThree = new Blob([dataThree], {type: 'image/svg+xml;charset=utf-8'});
+  var urlThree = DOMURL.createObjectURL(svgThree);
+
+  bikeThreeImg = new Image();
+  bikeThreeImg.onload = function() {
+    bikeThreeCan.width = this.width*0.2;
+    bikeThreeCan.height = this.height*0.2;
+    bikeThreeCtx.drawImage(this,0,0, this.width, this.height, 0, 0, bikeThreeCan.width, bikeThreeCan.height);
+    bikeCanvases.push(bikeThreeCan)
+  };
+
+  bikeThreeImg.src = urlThree;
+
+  // Bike Four
+
+  bikeFourCan = document.createElement("canvas");
+  bikeFourCtx = bikeFourCan.getContext("2d");
+
+  var dataFour = document.getElementById('lightBikeFour').innerHTML;
+  var svgFour = new Blob([dataFour], {type: 'image/svg+xml;charset=utf-8'});
+  var urlFour = DOMURL.createObjectURL(svgFour);
+
+  bikeFourImg = new Image();
+  bikeFourImg.onload = function() {
+    bikeFourCan.width = this.width*0.2;
+    bikeFourCan.height = this.height*0.2;
+    bikeFourCtx.drawImage(this,0,0, this.width, this.height, 0, 0, bikeFourCan.width, bikeFourCan.height);
+    bikeCanvases.push(bikeFourCan)
     gameStart();
   };
 
-  trailImg.src = "img/trail.svg";
-
-
-  // _CONTEXT.drawImage(imgContainerCan,0,0);
+  bikeFourImg.src = urlFour;
 }
 
 function gameStart(){
   borders = getBorders()
 
   bikeOne = new Bike(53, 44, 0, 5, 5,'#FFFFFF');
-  bikeTwo = new Bike(borders[1] - 35, borders[0] + 27, 90, 5, 5,'#19a497');
-  bikeThree = new Bike(borders[1] - 35, borders[2] - 27, 180, 5, 5,'#24e0c9');
-  bikeFour = new Bike(borders[3] + 35, borders[2] - 27, 270, 5, 5,'#105b50');
-  // bikeThree = new Bike(298, 314, 0, 5, 5,'#55b5');
-  // bikeFour = new Bike(263, 233, 0, 5, 5,'#19a497');
-  // bikeFive = new Bike(228, 179, 0, 5, 5,'#FFFFFF');
-  // bikeSix = new Bike(298, 260, 0, 5, 5,'#24e0c9');
-  // bikeSeven = new Bike(298, 314, 0, 5, 5,'#55b5');
-  // bikeEight = new Bike(263, 233, 0, 5, 5,'#19a497');
+  bikeTwo = new Bike(borders[1] - 35, borders[0] + 27, 90, 5, 5,'#24e0c9');
+  bikeThree = new Bike(borders[1] - 35, borders[2] - 27, 180, 5, 5,'#2499e0');
+  bikeFour = new Bike(borders[3] + 35, borders[2] - 27, 270, 5, 5,'#ffc700');
 
   _OBJECTS.push(bikeOne);
   _OBJECTS.push(bikeTwo);
   _OBJECTS.push(bikeThree);
   _OBJECTS.push(bikeFour);
-  // _OBJECTS.push(bikeFive);
-  // _OBJECTS.push(bikeSix);
-  // _OBJECTS.push(bikeSeven);
-  // _OBJECTS.push(bikeEight);
-  // console.log(_OBJECTS);
 
-
-
-  // var colors = [ "#19a497", "#24e0c9", "#105b50", "#FFFFFF" ]
-
-  // for (var i = 2; i > 0; i--) {
-  //   color = colors[Math.floor(Math.random()*colors.length)];
-  //   bikeOne = new Bike(228, 179, 0, 5, 5,color);
-  //   _OBJECTS.push(bikeOne);
-  // }
   render();
 }
 
@@ -205,18 +237,22 @@ function drawObjects() {
       imgContainerCtx.fillStyle = '#000000';
       //_CONTEXT.fillRect(0,0,window.innerWidth,window.innerHeight);
       imgContainerCtx.globalAlpha = 1;
-      //console.log(bikeCan.height)
+      //console.log(bikeCanvases[i].height)
 
       //Drawing rotated bike.
-      imgContainerCtx.clearRect ( 0 , 0 , bikeCan.width, bikeCan.height );
+      imgContainerCtx.clearRect ( 0 , 0 , bikeCanvases[i].width, bikeCanvases[i].height );
       imgContainerCtx.save();
       imgContainerCtx.translate(bike.x, bike.y);
     	imgContainerCtx.rotate(bike.rotation*(Math.PI/180));
-    	imgContainerCtx.drawImage(bikeCan, -(bikeCan.width/2), -(bikeCan.height/2));
+    	imgContainerCtx.drawImage(bikeCanvases[i], -(bikeCanvases[i].width/2), -(bikeCanvases[i].height/2));
     	imgContainerCtx.restore();
+
     } else if (bike.crashed == true && bike.still_need_explosion == true){
       createExplosion(bike.x, bike.y, bike.color);
       bike.still_need_explosion = false;
+      bike.x = null
+      bike.y = null
+      bike.location_trail = []
     };
   };
 
