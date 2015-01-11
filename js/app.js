@@ -169,9 +169,9 @@ function updateObjects() {
       particles = [];
       _OBJECTS = [];
       bikeOne = new Bike(53, 44, 0, 5, 5,'#FFFFFF');
-      bikeTwo = new Bike(borders[1] - 35, borders[0] + 27, 90, 5, 5,'#19a497');
-      bikeThree = new Bike(borders[1] - 35, borders[2] - 27, 180, 5, 5,'#24e0c9');
-      bikeFour = new Bike(borders[3] + 35, borders[2] - 27, 270, 5, 5,'#105b50');
+      bikeTwo = new Bike(borders[1] - 35, borders[0] + 27, 90, 5, 5,'#24e0c9');
+      bikeThree = new Bike(borders[1] - 35, borders[2] - 27, 180, 5, 5,'#2499e0');
+      bikeFour = new Bike(borders[3] + 35, borders[2] - 27, 270, 5, 5,'#ffc700');
 
       _OBJECTS.push(bikeOne);
       _OBJECTS.push(bikeTwo);
