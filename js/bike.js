@@ -39,11 +39,7 @@ Bike.prototype.move = function(bikes) {
 
     if (gonna_collide_with_bike_trail || gonna_collide_with_border){
       var available_directions = availableDirections(bike, bikes, borders);
-      // console.log('gonna collide, available_directions');
-      // console.log(available_directions);
       direction = pickDirection(available_directions);
-      //bike.speed = 0;
-      //use available directions to get direction
       if (available_directions.length == 0){
         bike.speed = 0;
         bike.crashed = true;
@@ -53,19 +49,12 @@ Bike.prototype.move = function(bikes) {
       }
     } else if (want_to_change_direction){
       var available_directions = availableDirections(bike, bikes, borders);
-      // console.log('wanne change direction, available_directions');
-      // console.log(available_directions);
 
       direction = pickDirection(available_directions);
 
       if (available_directions.length != 0){
         bike.direction = available_directions[Math.floor(Math.random()*available_directions.length)];
       }
-
-      //$(bike).animate({direction: newTargetDirection}, 200);
-
-      //use available directions to get direction
-      //still need to write algortime :p
     }
 
     bike = logBikeLocation(bike);
@@ -73,7 +62,6 @@ Bike.prototype.move = function(bikes) {
   }
 
   bike.rotation = bike.direction;
-  //bike.rotation += (bike.direction-bike.rotation)/4;
 };
 
 function pickDirection(directions){
@@ -154,7 +142,6 @@ function logBikeLocation(bike){
   }
 
   bike.location_trail.unshift(location);
-  //bike.location_trail = bike.location_trail.slice(0,7);
 
   return bike;
 };
@@ -207,8 +194,6 @@ function trailCollision(bike, bikes){
       } else if((bikes[i].next_x) == (bike.x + x_offset) &&
                 (bikes[i].next_y) == (bike.y + y_offset) &&
                 (bikes[i] != bike)){
-        console.log("other bike is heading here");
-        console.log("from bike: " + i)
         trail_collision = true;
       }
     };
@@ -305,7 +290,6 @@ function availableDirections(bike, bikes, borders){
 };
 
 function get_new_direction(current_direction, x, y, bottom_border, right_border) {
-  // console.log("current_direction: " + current_direction);
   var directions = [ 0, 90, 180, 270];
 
   // remove current direction from possible new directions
@@ -340,9 +324,6 @@ function get_new_direction(current_direction, x, y, bottom_border, right_border)
   }
 
   return directions[Math.floor(Math.random()*directions.length)];
-  // console.log("x: " + bike.x);
-  // console.log("y: " + bike.y);
-  // console.log("direction: " + bike.direction);
 }
 
 function remove_item(array, item){
