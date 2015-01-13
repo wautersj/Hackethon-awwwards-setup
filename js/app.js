@@ -1,4 +1,6 @@
-$(document).ready(init);
+$(document).ready(function(){
+  setTimeout(init,200);
+});
 
 var _CANVAS;
 var _CONTEXT;
@@ -26,6 +28,8 @@ var labelCanvases = [];
 var imgContainerCan;
 var imgContainerCtx;
 
+var bikeScale = 0.6;
+
 var _FPS;
 var _OBJECTS;
 var iterationsWithAllBikesCrashed = 0;
@@ -45,155 +49,91 @@ function init() {
   bikeOneCan = document.createElement("canvas");
   bikeOneCtx = bikeOneCan.getContext("2d");
 
-  var DOMURL = window.URL || window.webkitURL || window;
-
-  var dataOne = document.getElementById('lightBikeOne').innerHTML;
-  var svgOne = new Blob([dataOne], {type: 'image/svg+xml;charset=utf-8'});
-  var urlOne = DOMURL.createObjectURL(svgOne);
-
-  bikeOneImg = new Image();
-  bikeOneImg.onload = function() {
-    bikeOneCan.width = this.width*0.3;
-    bikeOneCan.height = this.height*0.3;
-    bikeOneCtx.drawImage(this,0,0, this.width, this.height, 0, 0, bikeOneCan.width, bikeOneCan.height);
-    bikeCanvases.push(bikeOneCan)
-  };
-
-  bikeOneImg.src = urlOne;
+  bikeOneImg = document.getElementById('lightBikeOne');
+  bikeOneCan.width = bikeOneImg.width*bikeScale;
+  bikeOneCan.height = bikeOneImg.height*bikeScale;
+  bikeOneCtx.drawImage(bikeOneImg,0,0, bikeOneImg.width, bikeOneImg.height, 0, 0, bikeOneCan.width, bikeOneCan.height);
+  bikeCanvases.push(bikeOneCan);
 
   // Bike Two
+
 
   bikeTwoCan = document.createElement("canvas");
   bikeTwoCtx = bikeTwoCan.getContext("2d");
 
-  var dataTwo = document.getElementById('lightBikeTwo').innerHTML;
-  var svgTwo = new Blob([dataTwo], {type: 'image/svg+xml;charset=utf-8'});
-  var urlTwo = DOMURL.createObjectURL(svgTwo);
-
-  bikeTwoImg = new Image();
-  bikeTwoImg.onload = function() {
-    bikeTwoCan.width = this.width*0.3;
-    bikeTwoCan.height = this.height*0.3;
-    bikeTwoCtx.drawImage(this,0,0, this.width, this.height, 0, 0, bikeTwoCan.width, bikeTwoCan.height);
-    bikeCanvases.push(bikeTwoCan)
-  };
-
-  bikeTwoImg.src = urlTwo;
+  bikeTwoImg = document.getElementById('lightBikeTwo');
+  bikeTwoCan.width = bikeTwoImg.width*bikeScale;
+  bikeTwoCan.height = bikeTwoImg.height*bikeScale;
+  bikeTwoCtx.drawImage(bikeTwoImg,0,0, bikeTwoImg.width, bikeTwoImg.height, 0, 0, bikeTwoCan.width, bikeTwoCan.height);
+  bikeCanvases.push(bikeTwoCan);
 
   // Bike Three
 
   bikeThreeCan = document.createElement("canvas");
   bikeThreeCtx = bikeThreeCan.getContext("2d");
 
-  var dataThree = document.getElementById('lightBikeThree').innerHTML;
-  var svgThree = new Blob([dataThree], {type: 'image/svg+xml;charset=utf-8'});
-  var urlThree = DOMURL.createObjectURL(svgThree);
-
-  bikeThreeImg = new Image();
-  bikeThreeImg.onload = function() {
-    bikeThreeCan.width = this.width*0.3;
-    bikeThreeCan.height = this.height*0.3;
-    bikeThreeCtx.drawImage(this,0,0, this.width, this.height, 0, 0, bikeThreeCan.width, bikeThreeCan.height);
-    bikeCanvases.push(bikeThreeCan)
-  };
-
-  bikeThreeImg.src = urlThree;
+  bikeThreeImg = document.getElementById('lightBikeThree');
+  bikeThreeCan.width = bikeThreeImg.width*bikeScale;
+  bikeThreeCan.height = bikeThreeImg.height*bikeScale;
+  bikeThreeCtx.drawImage(bikeThreeImg,0,0, bikeThreeImg.width, bikeThreeImg.height, 0, 0, bikeThreeCan.width, bikeThreeCan.height);
+  bikeCanvases.push(bikeThreeCan);
 
   // Bike Four
 
   bikeFourCan = document.createElement("canvas");
   bikeFourCtx = bikeFourCan.getContext("2d");
 
-  var dataFour = document.getElementById('lightBikeFour').innerHTML;
-  var svgFour = new Blob([dataFour], {type: 'image/svg+xml;charset=utf-8'});
-  var urlFour = DOMURL.createObjectURL(svgFour);
+  bikeFourImg = document.getElementById('lightBikeFour');
+  bikeFourCan.width = bikeFourImg.width*bikeScale;
+  bikeFourCan.height = bikeFourImg.height*bikeScale;
+  bikeFourCtx.drawImage(bikeFourImg,0,0, bikeFourImg.width, bikeFourImg.height, 0, 0, bikeFourCan.width, bikeFourCan.height);
+  bikeCanvases.push(bikeFourCan);
 
-  bikeFourImg = new Image();
-  bikeFourImg.onload = function() {
-    bikeFourCan.width = this.width*0.3;
-    bikeFourCan.height = this.height*0.3;
-    bikeFourCtx.drawImage(this,0,0, this.width, this.height, 0, 0, bikeFourCan.width, bikeFourCan.height);
-    bikeCanvases.push(bikeFourCan)
-    gameStart();
-  };
-
-  bikeFourImg.src = urlFour;
+  gameStart();
 
   // Top Winner Label
 
   labelTopCan = document.createElement("canvas");
   labelTopCtx = labelTopCan.getContext("2d");
 
-  var dataTopLabel = document.getElementById('labelTop').innerHTML;
-  var svgTopLabel = new Blob([dataTopLabel], {type: 'image/svg+xml;charset=utf-8'});
-  var urlTopLabel = DOMURL.createObjectURL(svgTopLabel);
-
-  labelTopImg = new Image();
-  labelTopImg.onload = function() {
-    labelTopCan.width = this.width;
-    labelTopCan.height = this.height;
-    labelTopCtx.drawImage(this,0,0, this.width, this.height, 0, 0, labelTopCan.width, labelTopCan.height);
-    labelCanvases.push(labelTopCan)
-  };
-
-  labelTopImg.src = urlTopLabel;
+  labelTopImg = document.getElementById('labelTop');
+  labelTopCan.width = labelTopImg.width;
+  labelTopCan.height = labelTopImg.height;
+  labelTopCtx.drawImage(labelTopImg,0,0, labelTopImg.width, labelTopImg.height, 0, 0, labelTopCan.width, labelTopCan.height);
+  labelCanvases.push(labelTopCan)
 
   // Bottom Winner Label
 
   labelBottomCan = document.createElement("canvas");
   labelBottomCtx = labelBottomCan.getContext("2d");
 
-  var dataBottomLabel = document.getElementById('labelBottom').innerHTML;
-  var svgBottomLabel = new Blob([dataBottomLabel], {type: 'image/svg+xml;charset=utf-8'});
-  var urlBottomLabel = DOMURL.createObjectURL(svgBottomLabel);
-
-  labelBottomImg = new Image();
-  labelBottomImg.onload = function() {
-    labelBottomCan.width = this.width;
-    labelBottomCan.height = this.height;
-    labelBottomCtx.drawImage(this,0,0, this.width, this.height, 0, 0, labelBottomCan.width, labelBottomCan.height);
-    labelCanvases.push(labelBottomCan)
-  };
-
-  labelBottomImg.src = urlBottomLabel;
+  labelBottomImg = document.getElementById('labelBottom');
+  labelBottomCan.width = labelBottomImg.width;
+  labelBottomCan.height = labelBottomImg.height;
+  labelBottomCtx.drawImage(labelBottomImg,0,0, labelBottomImg.width, labelBottomImg.height, 0, 0, labelBottomCan.width, labelBottomCan.height);
+  labelCanvases.push(labelBottomCan)
 
   // Left Winner Label
 
   labelLeftCan = document.createElement("canvas");
   labelLeftCtx = labelLeftCan.getContext("2d");
 
-  var dataLeftLabel = document.getElementById('labelLeft').innerHTML;
-  var svgLeftLabel = new Blob([dataLeftLabel], {type: 'image/svg+xml;charset=utf-8'});
-  var urlLeftLabel = DOMURL.createObjectURL(svgLeftLabel);
-
-  labelLeftImg = new Image();
-  labelLeftImg.onload = function() {
-    labelLeftCan.width = this.width;
-    labelLeftCan.height = this.height;
-    labelLeftCtx.drawImage(this,0,0, this.width, this.height, 0, 0, labelLeftCan.width, labelLeftCan.height);
-    labelCanvases.push(labelLeftCan)
-  };
-
-  labelLeftImg.src = urlLeftLabel;
+  labelLeftImg = document.getElementById('labelLeft');
+  labelLeftCan.width = labelLeftImg.width;
+  labelLeftCan.height = labelLeftImg.height;
+  labelLeftCtx.drawImage(labelLeftImg,0,0, labelLeftImg.width, labelLeftImg.height, 0, 0, labelLeftCan.width, labelLeftCan.height);
+  labelCanvases.push(labelLeftCan)
 
   // Right Winner Label
 
   labelRightCan = document.createElement("canvas");
   labelRightCtx = labelRightCan.getContext("2d");
 
-  var dataRightLabel = document.getElementById('labelRight').innerHTML;
-  var svgRightLabel = new Blob([dataRightLabel], {type: 'image/svg+xml;charset=utf-8'});
-  var urlRightLabel = DOMURL.createObjectURL(svgRightLabel);
-
-  labelRightImg = new Image();
-  labelRightImg.onload = function() {
-    labelRightCan.width = this.width;
-    labelRightCan.height = this.height;
-    labelRightCtx.drawImage(this,0,0, this.width, this.height, 0, 0, labelRightCan.width, labelRightCan.height);
-    labelCanvases.push(labelRightCan)
-  };
-
-  labelRightImg.src = urlRightLabel;
+  labelRightImg = document.getElementById('labelRight');
+  labelRightCan.width = labelRightImg.width;
+  labelRightCan.height = labelRightImg.height;
+  labelRightCtx.drawImage(labelRightImg,0,0, labelRightImg.width, labelRightImg.height, 0, 0, labelRightCan.width, labelRightCan.height);
+  labelCanvases.push(labelRightCan)
 }
 
 function gameStart(){
@@ -227,9 +167,35 @@ function render() {
 function updateCanvas() {
   if(_CANVAS.width!==window.innerWidth){
   	_CANVAS.width = imgContainerCan.width = window.innerWidth;
+    iterationsWithAllBikesCrashed = 0;
+      particles = [];
+      _OBJECTS = [];
+      borders = getBorders()
+      bikeOne = new Bike(53, 44, 0, 5, 5,'#FFFFFF');
+      bikeTwo = new Bike(borders[1] - 35, borders[0] + 27, 90, 5, 5,'#24e0c9');
+      bikeThree = new Bike(borders[1] - 35, borders[2] - 27, 180, 5, 5,'#2499e0');
+      bikeFour = new Bike(borders[3] + 35, borders[2] - 27, 270, 5, 5,'#ffc700');
+
+      _OBJECTS.push(bikeOne);
+      _OBJECTS.push(bikeTwo);
+      _OBJECTS.push(bikeThree);
+      _OBJECTS.push(bikeFour);
   }
   if(_CANVAS.height!==window.innerHeight){
   	_CANVAS.height = imgContainerCan.height = window.innerHeight;
+    iterationsWithAllBikesCrashed = 0;
+      particles = [];
+      _OBJECTS = [];
+      borders = getBorders()
+      bikeOne = new Bike(53, 44, 0, 5, 5,'#FFFFFF');
+      bikeTwo = new Bike(borders[1] - 35, borders[0] + 27, 90, 5, 5,'#24e0c9');
+      bikeThree = new Bike(borders[1] - 35, borders[2] - 27, 180, 5, 5,'#2499e0');
+      bikeFour = new Bike(borders[3] + 35, borders[2] - 27, 270, 5, 5,'#ffc700');
+
+      _OBJECTS.push(bikeOne);
+      _OBJECTS.push(bikeTwo);
+      _OBJECTS.push(bikeThree);
+      _OBJECTS.push(bikeFour);
   }
 }
 
@@ -250,7 +216,7 @@ function updateObjects() {
 
   if (BikesCrashed > 2) {
     iterationsWithAllBikesCrashed += 1;
-    console.log(iterationsWithAllBikesCrashed)
+    //console.log(iterationsWithAllBikesCrashed)
     if (BikesCrashed > 3) {
       iterationsWithAllBikesCrashed = 0;
       particles = [];
