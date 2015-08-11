@@ -67,7 +67,7 @@ function createRimple(){
 	var rimple = {
 		value:2,
 		radius:rimpleRadius,
-		color: '#6a3960'
+		color: '#19a497'
 	};
 
 	/*
@@ -170,7 +170,7 @@ function updateObjects(){
 function drawObjects(){
 	//draw part 1 of dual effect screen;
 	_CONTEXT.globalAlpha = 0.25;
-	_CONTEXT.fillStyle = '#522c4a';
+	_CONTEXT.fillStyle = '#1C1C1C';
     _CONTEXT.fillRect(0,0,window.innerWidth,window.innerHeight);
     _CONTEXT.globalAlpha = 1;
 
